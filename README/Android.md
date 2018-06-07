@@ -1,0 +1,68 @@
+# Android 集成指南
+
+## 拷贝文件
+
+- 将 `Classes/openinstall` 文件夹拷贝到项目的 `Classes` 目录下
+- 将 `Android` 目录下的 `src` 文件夹下的内容拷贝到项目的 `app/src` 目录下
+- 将 `Android` 目录下的 `libs/openinstall_v2.2.0.jar` 拷贝到项目的 `app/libs` 目录下 
+
+## 配置项目
+
+#### 添加 C++ 源文件定义
+
+添加 openinstall 相关的 C++ 文件到 `Android.mk` 的 `LOCAL_SRC_FILES` 中
+
+```
+        ../../../Classes/openinstall/OpenInstall.cpp \
+        ../../../Classes/openinstall/AppData.cpp \
+        ../../../Classes/openinstall/Android/OpenInstallProxy.cpp \
+        ../../../Classes/openinstall/Android/AndroidOpenInstall.cpp
+```
+
+#### 添加应用权限
+
+在 `AndroidManifest.xml` 中添加 `openinstall` 需要的权限
+
+``` xml
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+```
+
+#### 配置 AppKey 和 scheme
+从 [openinstall官网](https://www.openinstall.io/) 获取应用的 `AppKey` 和 `scheme`。将下面文档中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 替换
+##### AppKey 配置
+在 `AndroidManifest.xml` 的 `application` 标签中添加
+
+``` xml
+    <meta-data
+        android:name="com.openinstall.APP_KEY"
+        android:value="OPENINSTALL_APPKEY"/>
+```
+#### 拉起配置
+将 `AndroidManifest.xml` 中设置的启动 `AppActivity` 替换成 openinstall 提供的 `OpenInstallActivity`
+``` xml
+    <activity
+        android:name="io.openinstall.sdk.OpenInstallActivity"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:label="@string/app_name"
+        android:launchMode="singleTask"
+        android:screenOrientation="landscape"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN"/>
+            <category android:name="android.intent.category.LAUNCHER"/>
+        </intent-filter>
+
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW"/>
+
+            <category android:name="android.intent.category.DEFAULT"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+
+            <data android:scheme="OPENINSTALL_SCHEME"/>
+        </intent-filter>
+
+    </activity>
+```
+_如果有其他的逻辑需要加入 `Activity` 中，可以采用继承 `OpenInstallActivity` 来实现_
