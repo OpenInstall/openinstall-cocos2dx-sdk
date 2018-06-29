@@ -1,23 +1,15 @@
 # Android 集成指南
 
+## 导出工程
+- 在菜单 `项目` -> `构建发布` 弹框中，发布平台选择 `Android`，勾选上 `Android Studio`，填写其他配置，最后点击 `构建`
+- 构建完成后，使用 `Android Studio` 打开位于 `${projectDir}/build/jsb-link/frameworks/runtime-src/proj.android-studio` 的 Android 工程。
+
 ## 拷贝文件
-
-- 将 `Classes/openinstall` 文件夹拷贝到项目的 `Classes` 目录下
 - 将 `Android` 目录下的 `src` 文件夹下的内容拷贝到项目的 `app/src` 目录下
-- 将 `Android` 目录下的 `libs/openinstall_v2.2.0.jar` 拷贝到项目的 `app/libs` 目录下 
+- 将 `Android` 目录下的 `libs/openinstall_v2.2.0.jar` 拷贝到项目的 `app/libs` 目录下
 
-## 配置项目
 
-#### 添加 C++ 源文件定义
-
-添加 openinstall 相关的 C++ 文件到 `Android.mk` 的 `LOCAL_SRC_FILES` 中
-
-```
-        ../../../Classes/openinstall/OpenInstall.cpp \
-        ../../../Classes/openinstall/AppData.cpp \
-        ../../../Classes/openinstall/Android/OpenInstallProxy.cpp \
-        ../../../Classes/openinstall/Android/AndroidOpenInstall.cpp
-```
+## 配置 openinstall
 
 #### 添加应用权限
 
@@ -39,10 +31,14 @@
         android:value="OPENINSTALL_APPKEY"/>
 ```
 #### 拉起配置
-将 `AndroidManifest.xml` 中设置的启动 `AppActivity` 替换成 openinstall 提供的 `OpenInstallActivity`
+- 将启动 `AppActivity` 替换成 openinstall 提供的 `OpenInstallActivity`
+- 给启动 `Activity` 添加 `android:launchMode="singleTask"` 属性
+- 给启动 `Activity` 添加 `scheme` 配置
+
+最终 `Activity` 的配置大致如下
 ``` xml
     <activity
-        android:name="io.openinstall.sdk.OpenInstallActivity"
+        android:name="io.openinstall.cocos2dx.OpenInstallActivity"
         android:configChanges="orientation|keyboardHidden|screenSize"
         android:label="@string/app_name"
         android:launchMode="singleTask"
@@ -65,4 +61,4 @@
 
     </activity>
 ```
-_如果有其他的逻辑需要加入 `Activity` 中，可以采用继承 `OpenInstallActivity` 来实现_
+_如果有其他的逻辑需要加入 `AppActivity` 中，可以采用继承 `OpenInstallActivity` 来实现_
