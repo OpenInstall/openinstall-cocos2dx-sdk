@@ -13,8 +13,8 @@ var openinstall = {
         if (cc.sys.OS_ANDROID == cc.sys.os) {
             jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
                 "getInstall", "(I)V", s);
-        } else {
-            console.log("not support " + cc.sys.os);
+        } else if(cc.sys.OS_IOS == cc.sys.os){
+            jsb.reflection.callStaticMethod("IOSOpenInstallBridge","getInstall:",s);
         }
     },
     registerWakeUpHandler: function (callback) {
@@ -22,8 +22,8 @@ var openinstall = {
         if (cc.sys.OS_ANDROID == cc.sys.os) {
             jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
                 "registerWakeup", "()V");
-        } else {
-            console.log("not support " + cc.sys.os);
+        } else if(cc.sys.OS_IOS == cc.sys.os){
+            jsb.reflection.callStaticMethod("IOSOpenInstallBridge","registerWakeUpHandler");
         }
     },
 
@@ -31,8 +31,8 @@ var openinstall = {
         if (cc.sys.OS_ANDROID == cc.sys.os) {
             jsb.reflection.callStaticMethod("com/fm/openinstall/OpenInstall",
                 "reportRegister", "()V");
-        } else {
-            console.log("not support " + cc.sys.os);
+        } else if(cc.sys.OS_IOS == cc.sys.os){
+            jsb.reflection.callStaticMethod("IOSOpenInstallBridge","reportRegister");
         }
     },
 
@@ -40,8 +40,8 @@ var openinstall = {
         if (cc.sys.OS_ANDROID == cc.sys.os) {
             jsb.reflection.callStaticMethod("com/fm/openinstall/OpenInstall",
                 "reportEffectPoint", "(Ljava/lang/String;J)V", pointId, pointValue);
-        } else {
-            console.log("not support " + cc.sys.os);
+        } else if(cc.sys.OS_IOS == cc.sys.os){
+            jsb.reflection.callStaticMethod("IOSOpenInstallBridge","reportEffectPoint:Value:",pointId,pointValue);
         }
     },
 
