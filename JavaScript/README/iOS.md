@@ -7,33 +7,50 @@
 ## 拷贝文件
 - 将 `iOS` 目录下的 `OpeninstallCocosJS` 文件夹拷贝到项目的 `ios` 目录下
 
-## 配置 openinstall
+## 初始化 openinstall 
 
 在项目中 `ios` 文件夹下的 `Info.plist` 文件中配置appKey键值对，如下：
+
 ``` plist
-<key>com.openinstall.APP_KEY</key>
-<string>从openinstall官网后台获取应用的appKey</string>
+  	<key>com.openinstall.APP_KEY</key>
+	<string>从openinstall官网后台获取应用的appKey</string>
 ```
-#### universal links配置（iOS9以后推荐使用）
-
-对于iOS，为确保能正常跳转，AppID必须开启Associated Domains功能，请到[苹果开发者网站](https://developer.apple.com)，选择Certificate, Identifiers & Profiles，选择相应的AppID，开启Associated Domains。注意：当AppID重新编辑过之后，需要更新相应的mobileprovision证书。(详细配置步骤请看[openinstall官网](https://www.openinstall.io)后台文档，universal link从后台获取)，如果已经开启过Associated Domains功能，进行下面操作：
-
-- 在左侧导航器中点击您的项目
-- 选择 `Capabilities` 标签
-- 打开 `Associated Domains` 开关
-- 添加 openinstall 官网后台中应用对应的关联域名（iOS集成->iOS应用配置->关联域名(Associated Domains)）
-
-##### 相关代码：
 
 在 `AppController.mm` 中，增加头文件的引用：
 
-```objc
+```obj
 #import "Openinstall.h"
 ```
 
+在 `AppController.mm` 中尽量早的调用openinstall初始化方法:
+
+```obj
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+   
+//尽量早的去调用
+   [Openinstall init];
+
+//其他代码
+
+   return YES;
+}
+
+```
+
+#### universal links配置（iOS9以后推荐使用）
+
+对于iOS，为确保能正常跳转，AppID必须开启Associated Domains功能，请到 https://developer.apple.com，选择Certificate, Identifiers & Profiles，选择相应的AppID，开启Associated Domains。注意：当AppID重新编辑过之后，需要更新相应的mobileprovision证书。(详细配置步骤请看openinstall官网后台文档，universal link从后台获取，https://www.openinstall.io)，如果已经开启过Associated Domains功能，进行下面操作：
+
+- 在左侧导航器中点击您的项目
+- 选择'Capabilities'标签
+- 打开'Associated Domains'开关
+- 添加openinstall官网后台中应用对应的关联域名（iOS集成->iOS应用配置->关联域名(Associated Domains)）
+
+####相关代码：
+
 在 `AppController.mm` 中添加通用链接(Universal Link)回调方法：
 
-```objc
+```obj
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
     //判断是否通过OpenInstall Universal Link 唤起App
     if ([Openinstall setUserActivity:userActivity]) {
@@ -64,15 +81,15 @@
 	</array>
 ```
 
-##### 相关代码：
+####相关代码：
 
 在 `AppController.mm` 中，增加头文件的引用：
 
-``` objc
+```obj
 #import "Openinstall.h"
 ```
 
-``` objc
+```obj
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
     //判断是否通过OpenInstall URL Scheme 唤起App
     if  ([Openinstall setLinkURL:url]){
