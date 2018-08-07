@@ -31,14 +31,14 @@
         android:value="OPENINSTALL_APPKEY"/>
 ```
 #### 拉起配置
-- 将启动 `AppActivity` 替换成 openinstall 提供的 `OpenInstallActivity`
-- 给启动 `Activity` 添加 `android:launchMode="singleTask"` 属性
-- 给启动 `Activity` 添加 `scheme` 配置
+- 将启动 `AppActivity` 继承 openinstall 提供的 `OpenInstallActivity`
+- 给启动 `AppActivity` 添加 `android:launchMode="singleTask"` 属性
+- 给启动 `AppActivity` 添加 `scheme` 配置
 
-最终 `Activity` 的配置大致如下
+最终 `AppActivity` 的配置大致如下
 ``` xml
     <activity
-        android:name="io.openinstall.cocos2dx.OpenInstallActivity"
+        android:name="org.cocos2dx.javascript.AppActivity"
         android:configChanges="orientation|keyboardHidden|screenSize"
         android:label="@string/app_name"
         android:launchMode="singleTask"
@@ -61,4 +61,4 @@
 
     </activity>
 ```
-_如果有其他的逻辑需要加入 `AppActivity` 中，可以采用继承 `OpenInstallActivity` 来实现_
+_不采用继承 `OpenInstallActivity` 的方式时，可以将 `OpenInstallActivity` 中的相关代码拷贝到 `AppActivity` 中_

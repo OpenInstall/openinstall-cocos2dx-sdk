@@ -46,7 +46,7 @@
 - 打开'Associated Domains'开关
 - 添加openinstall官网后台中应用对应的关联域名（iOS集成->iOS应用配置->关联域名(Associated Domains)）
 
-####相关代码：
+#### 相关代码：
 
 在 `AppController.mm` 中添加通用链接(Universal Link)回调方法：
 
@@ -81,13 +81,9 @@
 	</array>
 ```
 
-####相关代码：
+#### 相关代码：
 
-在 `AppController.mm` 中，增加头文件的引用：
-
-```obj
-#import "Openinstall.h"
-```
+在 `AppController.mm` 中添加 `scheme` 回调的方法
 
 ```obj
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{

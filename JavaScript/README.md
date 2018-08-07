@@ -21,19 +21,25 @@ var openinstall = require("OpenInstall");
 在组件脚本的 `onLoad` 方法中，注册拉起回调，这样当 App 被拉起时，会回调方法，并可在回调中获取拉起数据
 
 ``` js
-    openinstall.registerWakeUpHandler(function(appData){
+    // 拉起回调方法
+    _wakeupCallback : function(appData){
         cc.log("拉起参数：channelCode=" + appData.channelCode 
             + ", bindData=" + appData.bindData);
-    });
+    },
+    // 在 onLoad 中调用
+    openinstall.registerWakeUpHandler(this._wakeupCallback);
 ```
 
 #### 获取安装数据
 在应用需要安装参数时，调用以下 api 获取由 SDK 保存的安装参数，可设置超时时长，单位秒
 ``` js
-    openinstall.getInstall(8, function(appData){
+    //安装回调方法
+    _installCallback : function(appData){
         cc.log("安装参数：channelCode=" + appData.channelCode 
             + ", bindData=" + appData.bindData);
-    });
+    },
+    //在 App 业务需要时调用
+    openinstall.getInstall(8, this._installCallback);
 ```
 
 #### 渠道统计

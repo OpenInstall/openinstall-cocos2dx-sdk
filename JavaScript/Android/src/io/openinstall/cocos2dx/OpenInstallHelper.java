@@ -22,6 +22,11 @@ public class OpenInstallHelper {
     private static boolean isRegister = false;
     private static String wakeupDataHolder = null;
 
+    private static String REQUIRE_OPENINSTALL = "var openinstall = require(\"OpenInstall\");";
+    private static String CALLBACK_PATTERN = "openinstall.%s(%s);";
+    private static String CALLBACK_INSTALL = "_installCallback";
+    private static String CALLBACK_WAKEUP = "_wakeupCallback";
+
     public static void getInstall(int s, final Cocos2dxActivity cocos2dxActivity) {
 
         OpenInstall.getInstall(new AppInstallAdapter() {
@@ -32,9 +37,7 @@ public class OpenInstallHelper {
                 cocos2dxActivity.runOnGLThread(new Runnable() {
                     @Override
                     public void run() {
-                        Cocos2dxJavascriptJavaBridge.evalString(
-                                "var openinstall = require(\"OpenInstall\");"
-                                        + "openinstall._installCallback(" + json + ");");
+                        callback(CALLBACK_INSTALL, json);
                     }
                 });
             }
@@ -55,9 +58,7 @@ public class OpenInstallHelper {
                 cocos2dxActivity.runOnGLThread(new Runnable() {
                     @Override
                     public void run() {
-                        Cocos2dxJavascriptJavaBridge.evalString(
-                                "var openinstall = require(\"OpenInstall\");"
-                                        + "openinstall._wakeupCallback(" + json + ");");
+                        callback(CALLBACK_WAKEUP, json);
                     }
                 });
             }
@@ -71,9 +72,7 @@ public class OpenInstallHelper {
             cocos2dxActivity.runOnGLThread(new Runnable() {
                 @Override
                 public void run() {
-                    Cocos2dxJavascriptJavaBridge.evalString(
-                            "var openinstall = require(\"OpenInstall\");"
-                                    + "openinstall._wakeupCallback(" + wakeupDataHolder + ");");
+                    callback(CALLBACK_WAKEUP, wakeupDataHolder);
                     wakeupDataHolder = null;
                 }
             });
@@ -91,6 +90,12 @@ public class OpenInstallHelper {
             e.printStackTrace();
         }
         return jsonObject.toString();
+    }
+
+    private static void callback(String method, String data) {
+        String evalStr = REQUIRE_OPENINSTALL + String.format(CALLBACK_PATTERN, method, data);
+        Log.d(TAG, evalStr);
+        Cocos2dxJavascriptJavaBridge.evalString(evalStr);
     }
 
 }
