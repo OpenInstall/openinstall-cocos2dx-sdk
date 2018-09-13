@@ -37,7 +37,7 @@ void OpenInstall::getInstall(float s, void (*installCallback)(AppData appData)) 
     AndroidOpenInstall::getInstall(s, installCallback);
 #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 
-    CPOpenInstall::getInstallFrom(timeout,installCallback);
+    CPOpenInstall::getInstallFrom(s,installCallback);
 
 #endif
 

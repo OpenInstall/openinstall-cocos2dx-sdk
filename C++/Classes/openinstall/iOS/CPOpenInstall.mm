@@ -49,8 +49,9 @@ void CPOpenInstall::registerWakeUpHandlerToNative(void (*wakeupCallback)(AppData
 
 void CPOpenInstall::restoreWakeUpHandlerCallBack(AppData appdata)
 {
-    
-    restoreCallBack(appdata);
+    if (restoreCallBack) {
+        restoreCallBack(appdata);
+    }
 }
 
 void CPOpenInstall::reportRegisterToService(){
