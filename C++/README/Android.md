@@ -4,7 +4,7 @@
 
 - 将 `Classes/openinstall` 文件夹拷贝到项目的 `Classes` 目录下
 - 将 `Android` 目录下的 `src` 文件夹下的内容拷贝到项目的 `app/src` 目录下
-- 将 `Android` 目录下的 `libs/openinstall_v2.2.0.jar` 拷贝到项目的 `app/libs` 目录下 
+- 将 `Android` 目录下的 `libs/openinstall_v2.2.1.jar` 拷贝到项目的 `app/libs` 目录下 
 
 ## 配置项目
 
