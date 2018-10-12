@@ -9,10 +9,12 @@
 #import "OpenInstallSDK.h"
 #import "cocos2d.h"
 #ifdef CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL_TMX
-#include "ScriptingCore.h"
 #include "cocos/scripting/js-bindings/jswrapper/SeApi.h"
 #else
 #include "scripting/js-bindings/manual/ScriptingCore.h"
+#endif
+#ifndef HAVE_INSPECTOR
+#include "ScriptingCore.h"
 #endif
 
 @interface IOSOpenInstallDelegate : NSObject<OpenInstallDelegate>

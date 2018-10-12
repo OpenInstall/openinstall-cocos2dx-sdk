@@ -47,7 +47,11 @@ static IOSOpenInstallDelegate *obj = nil;
 +(void)sendWakeUpJsonBack:(NSString *)json{
     
     std::string jsonStr = [json UTF8String];
+#ifndef HAVE_INSPECTOR
     std::string funcName = [@"var openinstall = require(\"OpenInstall\");openinstall._wakeupCallback" UTF8String];
+#else
+    std::string funcName = [@"var openinstall = window.__require(\"OpenInstall\");openinstall._wakeupCallback" UTF8String];
+#endif
     std::string jsCallStr = cocos2d::StringUtils::format("%s(%s);", funcName.c_str(),jsonStr.c_str());
     
 #if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL_TMX

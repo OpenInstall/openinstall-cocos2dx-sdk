@@ -30,9 +30,13 @@ using namespace cocos2d;
         NSDictionary *installDic = @{@"bindData":datas,@"channelCode":channelID};
         NSString *json = [IOSOpenInstallDelegate jsonStringWithObject:installDic];
         std::string jsonStr = [json UTF8String];
+#ifndef HAVE_INSPECTOR
         std::string funcName = [@"var openinstall = require(\"OpenInstall\");openinstall._installCallback" UTF8String];
+#else
+        std::string funcName = [@"var openinstall = window.__require(\"OpenInstall\");openinstall._installCallback" UTF8String];
+#endif
         std::string jsCallStr = cocos2d::StringUtils::format("%s(%s);", funcName.c_str(),jsonStr.c_str());
-        
+
 #if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL_TMX
         BOOL success = se::ScriptEngine::getInstance()->evalString(jsCallStr.c_str());
 #else
