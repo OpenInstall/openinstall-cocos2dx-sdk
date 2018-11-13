@@ -5,7 +5,8 @@
 - 将 `Classes/openinstall` 文件夹拷贝到项目的 `Classes` 目录下
 - 将 `iOS` 目录下的 `OpenInstallSDK2.2.0` 拷贝到源文件目录下
 - 导入 `Classes/openinstall` 目录下的 C++ 源文件、iOS 相关文件以及 iOS 目录下的 `OpenInstallSDK2.2.0` 到工程中
-
+最终工程目录结构如下：  
+![工程目录结构](./project.png)
 ## 配置项目
 
 #### 初始化配置

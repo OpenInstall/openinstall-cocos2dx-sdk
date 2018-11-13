@@ -9,7 +9,12 @@ cocos2d-x 集成 openinstall SDK
 集成 openinstall SDK 到 cocos2d-x iOS 项目中，请参考 [iOS 集成指南](README/iOS.md)
 
 ## 使用指南
-
+#### 导入头文件
+在所有需要使用到 openinstall api 的文件中，需要导入 openinstall 头文件
+``` cpp
+#include "OpenInstall.h"
+```
+*注：请根据文件目录结构适当调整引用路径*
 #### 初始化
 在 `AppDelegate` 的 `initGLContextAttrs` 的方法中进行初始化。
 ``` cpp
