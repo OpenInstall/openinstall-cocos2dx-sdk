@@ -5,7 +5,7 @@
 - 构建完成后，使用 `Xcode` 打开位于 `${projectDir}/build/jsb-link/frameworks/runtime-src/proj.ios_mac` 的 iOS 工程。
 
 ## 拷贝文件
-- 将 `iOS` 目录下的 `OpeninstallCocosJS` 文件夹拷贝到项目的 `ios` 目录下
+- 将 `iOS` 目录下的 `OpeninstallCocosJS` 文件夹拷贝到项目的 `ios` 目录下，然后在Xcode工程左边目录里找到`ios` 目录，右键通过 "Add Files to xxx" 添加 `OpeninstallCocosJS` 文件夹，add的时候注意勾选“Copy items if needed”、“Create groups”
 
 ## 初始化 openinstall 
 
@@ -16,7 +16,7 @@
 	<string>从openinstall官网后台获取应用的appKey</string>
 ```
 
-在 `AppController.mm` 中，增加头文件的引用：
+在 `AppController.mm` 中，增加头文件的引用:
 
 ```obj
 #import "Openinstall.h"
@@ -97,7 +97,7 @@
     
 }
 
-//注意：在iOS9.0以上的设备中，下面这个方法会覆盖上面的方法，请结合自身业务（比如微信登录等业务）来调用
+//注意：在iOS9.0以上的设备中，下面这个系统方法会覆盖上面的系统方法（主要考虑到微信登录等业务），请结合自身业务来调用
 
 //支持iOS9以上
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(nonnull NSDictionary *)options{

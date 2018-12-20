@@ -67,7 +67,7 @@ __注意__：当 AppID 重新编辑过之后，需要更新相应的 mobileprovi
 ``` objc
   #import "OpenInstallSDK.h"
 
-//iOS9以下
+//支持目前所有版本的iOS
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
     //判断是否通过OpenInstall URL Scheme 唤起App
     if  ([OpenInstallSDK handLinkURL:url]){
@@ -78,7 +78,9 @@ __注意__：当 AppID 重新编辑过之后，需要更新相应的 mobileprovi
 
 }
 
-//iOS9以上
+//注意：在iOS9.0以上的设备中，下面这个系统方法会覆盖上面的系统方法（主要考虑到微信登录等业务），请结合自身业务来调用
+
+//支持iOS9以上
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(nonnull NSDictionary *)options{
     //判断是否通过OpenInstall URL Scheme 唤起App
     if  ([OpenInstallSDK handLinkURL:url]){
