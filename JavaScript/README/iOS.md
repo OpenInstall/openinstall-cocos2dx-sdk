@@ -86,6 +86,7 @@
 在 `AppController.mm` 中添加 `scheme` 回调的方法
 
 ```obj
+//支持目前所有版本的iOS
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
     //判断是否通过OpenInstall URL Scheme 唤起App
     if  ([Openinstall setLinkURL:url]){
@@ -96,7 +97,9 @@
     
 }
 
-//iOS9以上
+//注意：在iOS9.0以上的设备中，下面这个方法会覆盖上面的方法，请结合自身业务（比如微信登录等业务）来调用
+
+//支持iOS9以上
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(nonnull NSDictionary *)options{
     //判断是否通过OpenInstall URL Scheme 唤起App
     if  ([Openinstall setLinkURL:url]){
