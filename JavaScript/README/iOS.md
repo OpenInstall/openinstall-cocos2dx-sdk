@@ -37,7 +37,9 @@
 
 ```
 
-#### universal links配置（iOS9以后推荐使用）
+## 以下为 `一键拉起` 功能的相关配置和代码
+
+## universal links配置（iOS9以后推荐使用）
 
 对于iOS，为确保能正常跳转，AppID必须开启Associated Domains功能，请到 https://developer.apple.com，选择Certificate, Identifiers & Profiles，选择相应的AppID，开启Associated Domains。注意：当AppID重新编辑过之后，需要更新相应的mobileprovision证书。(详细配置步骤请看openinstall官网后台文档，universal link从后台获取，https://www.openinstall.io)，如果已经开启过Associated Domains功能，进行下面操作：
 
@@ -46,7 +48,7 @@
 - 打开'Associated Domains'开关
 - 添加openinstall官网后台中应用对应的关联域名（iOS集成->iOS应用配置->关联域名(Associated Domains)）
 
-#### 相关代码：
+### universal links相关代码：
 
 在 `AppController.mm` 中添加通用链接(Universal Link)回调方法：
 
@@ -61,7 +63,7 @@
 }
 ```
 
-#### scheme配置
+## scheme配置
 
 在 `Info.plist` 文件中，在`CFBundleURLTypes`数组中添加应用对应的`scheme`
 
@@ -81,7 +83,7 @@
 	</array>
 ```
 
-#### 相关代码：
+### scheme相关代码：
 
 在 `AppController.mm` 中添加 `scheme` 回调的方法
 
