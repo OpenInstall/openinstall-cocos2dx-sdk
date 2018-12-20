@@ -12,15 +12,15 @@ cocos2d-x 集成 openinstall SDK
 ## 使用指南
 基于开发工具 Cocos Creator 的集成使用手册
 
-### 1 快速下载
-如果只需要快速下载功能，无需其它功能（携带参数安装、渠道统计、一键拉起），完成初始化即可（包括iOS.md和Android.md中的初始化工作）
-
-### 其他功能先引入 openinstall 脚本
-#### 引入 openinstall 脚本
+### 除了`快速下载`功能，其他功能都需要先引入 openinstall 脚本
 将 `Script` 文件夹中的 `OpenInstall.js` 拖入项目的脚本文件夹 `Script` 中，在组件中使用时，请先引入脚本
 ``` js
 var openinstall = require("OpenInstall");
 ```
+
+### 1 快速下载
+如果只需要快速下载功能，无需其它功能（携带参数安装、渠道统计、一键拉起），完成初始化即可（包括iOS.md和Android.md中的初始化工作）
+
 
 ### 2 一键拉起  
 ##### 一键拉起的配置见iOS.md和Android.md相关文档
@@ -50,7 +50,9 @@ var openinstall = require("OpenInstall");
     //在 App 业务需要时调用
     openinstall.getInstall(10, this._installCallback);
 ```
-
+_备注：  
+- 注意这个安装参数尽量不要自己保存，在每次需要用到的时候调用该方法去获取，因为如果获取成功sdk会保存在本地  
+- 该方法可重复获取参数，如需只要在首次安装时获取，可设置标记，详细说明可参考openinstall官网的常见问题
 
 ### 4 渠道统计（高级版功能）
 SDK 会自动完成访问量、点击量、安装量、活跃量、留存率等统计工作。其它业务相关统计由开发人员代码埋点上报
