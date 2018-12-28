@@ -23,6 +23,8 @@ public class OpenInstallHelper {
     private static String wakeupDataHolder = null;
 
     private static String REQUIRE_OPENINSTALL = "var openinstall = require(\"OpenInstall\");";
+    //高版本Cocos Creator构建的项目请使用此语句
+    //private static String REQUIRE_OPENINSTALL = "var openinstall = window.__require(\"OpenInstall\");";
     private static String CALLBACK_PATTERN = "openinstall.%s(%s);";
     private static String CALLBACK_INSTALL = "_installCallback";
     private static String CALLBACK_WAKEUP = "_wakeupCallback";

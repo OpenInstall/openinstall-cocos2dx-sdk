@@ -8,6 +8,8 @@
 - 将 `Android` 目录下的 `src` 文件夹下的内容拷贝到项目的 `app/src` 目录下
 - 将 `Android` 目录下的 `libs/openinstall_v2.2.1.jar` 拷贝到项目的 `app/libs` 目录下
 
+使用新版cocos creator的用户，如果无法回调，则需要修改 `Android/src/io/openinstall/cocos2dx/OpenInstallHelper.java`中的引用语句  
+![高版本require](res/android_require.jpg)
 
 ## 配置 openinstall
 
