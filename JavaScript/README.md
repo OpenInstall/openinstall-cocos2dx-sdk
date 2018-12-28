@@ -1,6 +1,7 @@
 # openinstall-cocos2dx-javascript
-cocos2d-x 集成 openinstall SDK
+cocos2d-x 集成 openinstall SDK  
 
+此仓库是根据 Cocos Creator 集成而写，直接使用 `cocos2d-js` 的用户请参考 [cocos2d-js集成](README/cocos2d-js.md) 修改相应文件后再集成
 
 ## Android 集成
 
@@ -9,8 +10,7 @@ cocos2d-x 集成 openinstall SDK
 ## iOS 集成
 集成 openinstall SDK 到 cocos2d-x iOS 项目中，请参考 [iOS 集成指南](README/iOS.md)
 
-## 使用指南
-基于开发工具 Cocos Creator 的集成使用手册
+## 使用指南  
 
 ### 1 快速下载
 如果只需要快速下载功能，无需其它功能（携带参数安装、渠道统计、一键拉起），完成初始化即可（包括iOS.md和Android.md中的初始化工作）
