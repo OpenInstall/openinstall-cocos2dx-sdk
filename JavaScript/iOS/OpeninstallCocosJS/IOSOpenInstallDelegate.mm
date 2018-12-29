@@ -72,7 +72,7 @@ static IOSOpenInstallDelegate *obj = nil;
 
 }
 
-- (NSString *)jsonStringWithObject:(id)jsonObject{
++ (NSString *)jsonStringWithObject:(id)jsonObject{
     
     id arguments = (jsonObject == nil ? [NSNull null] : jsonObject);
     
@@ -84,7 +84,7 @@ static IOSOpenInstallDelegate *obj = nil;
     
     return argumentsJSON;
 }
-- (NSString *)cp_JSONString:(NSArray *)array{
++ (NSString *)cp_JSONString:(NSArray *)array{
     NSError *error = nil;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:array
                                                        options:0
