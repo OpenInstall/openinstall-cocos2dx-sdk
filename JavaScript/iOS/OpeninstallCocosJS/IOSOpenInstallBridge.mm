@@ -19,15 +19,7 @@ using namespace cocos2d;
     }
     [[OpenInstallSDK defaultManager] getInstallParmsWithTimeoutInterval:t completed:^(OpeninstallData * _Nullable appData) {
        
-        NSString *channelID = @"";
-        NSString *datas = @"";
-        if (appData.data) {
-            datas = [IOSOpenInstallDelegate jsonStringWithObject:appData.data];
-        }
-        if (appData.channelCode) {
-            channelID = appData.channelCode;
-        }
-        NSDictionary *installDic = @{@"bindData":datas,@"channelCode":channelID};
+        NSDictionary *installDic = @{@"bindData":appData.data?:@"",@"channelCode":appData.channelCode?:@""};
         NSString *json = [IOSOpenInstallDelegate jsonStringWithObject:installDic];
         std::string jsonStr = [json UTF8String];
 #ifndef HAVE_INSPECTOR
