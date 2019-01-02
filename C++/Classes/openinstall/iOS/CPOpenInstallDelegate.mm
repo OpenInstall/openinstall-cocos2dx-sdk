@@ -43,24 +43,30 @@ using namespace openInstall2dx;
 
 + (NSString *)jsonStringWithObject:(id)jsonObject{
     
-    // 将字典或者数组转化为JSON串
+    id arguments = (jsonObject == nil ? [NSNull null] : jsonObject);
+    
+    NSArray* argumentsWrappedInArr = [NSArray arrayWithObject:arguments];
+    
+    NSString* argumentsJSON = [self cp_JSONString:argumentsWrappedInArr];
+    
+    argumentsJSON = [argumentsJSON substringWithRange:NSMakeRange(1, [argumentsJSON length] - 2)];
+    
+    return argumentsJSON;
+}
++ (NSString *)cp_JSONString:(NSArray *)array{
     NSError *error = nil;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonObject
-                                                       options:NSJSONWritingPrettyPrinted
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:array
+                                                       options:0
                                                          error:&error];
     
     NSString *jsonString = [[NSString alloc] initWithData:jsonData
                                                  encoding:NSUTF8StringEncoding];
     
     if ([jsonString length] > 0 && error == nil){
-        
-        jsonString = [jsonString stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-        
         return jsonString;
     }else{
         return @"";
     }
-    
 }
 
 @end
