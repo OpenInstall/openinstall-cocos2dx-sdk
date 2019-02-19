@@ -166,14 +166,13 @@ _不采用继承 `OpenInstallActivity` 的方式时，可以将 `OpenInstallActi
 
 # 使用指南
 
-## 1 快速下载
-如果只需要快速下载功能，无需其它功能（携带参数安装、渠道统计、一键拉起），完成初始化相关工作即可
-
-### 以下功能都需要导入 `openinstall.lua` 文件到工程里，并在调用方法的时候引用，例如：
+导入 `openinstall.lua` 文件到工程里，并在调用方法的时候引用，例如：
 ``` lua
   local openinstall = require("app.models.openinstall")
   --require里面是openinstall.lua所在目录
 ```
+## 1 快速下载
+如果只需要快速下载功能，无需其它功能（携带参数安装、渠道统计、一键拉起），完成初始化相关工作即可
 
 ## 2 一键拉起
 完成文档前面iOS和Android介绍的一键拉起相关配置
