@@ -34,12 +34,13 @@
 ### 以下为 `一键拉起` 功能的相关配置和代码
 
 ### universal links配置（iOS9以后推荐使用）
-对于iOS，为确保能正常跳转，AppID必须开启Associated Domains功能，请到[苹果开发者网站](https://developer.apple.com)，选择Certificate, Identifiers & Profiles，选择相应的AppID，开启Associated Domains。注意：当AppID重新编辑过之后，需要更新相应的mobileprovision证书。(详细配置步骤请看[openinstall官网](https://www.openinstall.io)后台文档，universal link从后台获取)，如果已经开启过Associated Domains功能，进行下面操作：  
+
+对于iOS，为确保能正常跳转，AppID必须开启Associated Domains功能，请到[苹果开发者网站](https://developer.apple.com)，选择Certificate, Identifiers & Profiles，选择相应的AppID，开启Associated Domains。注意：当AppID重新编辑过之后，需要更新相应的mobileprovision证书。(图文配置步骤请看[iOS集成指南](https://www.openinstall.io/doc/ios_sdk.html))，如果已经开启过Associated Domains功能，进行下面操作：  
 
 - 在左侧导航器中点击您的项目
 - 选择 `Capabilities` 标签
 - 打开 `Associated Domains` 开关
-- 添加 openinstall 官网后台中应用对应的关联域名（iOS集成->iOS应用配置->关联域名(Associated Domains)）
+- 添加 openinstall 官网后台中应用对应的关联域名（openinstall应用控制台->iOS集成->iOS应用配置->关联域名(Associated Domains)）
 
 ### universal links相关代码
 
@@ -59,7 +60,9 @@
 ```
 
 ### scheme配置
-在 `Info.plist` 文件中，在 `CFBundleURLTypes` 数组中添加应用对应的 `scheme`，或者在工程“TARGETS-Info-URL Types”里快速添加
+
+在 `Info.plist` 文件中，在 `CFBundleURLTypes` 数组中添加应用对应的 `scheme`，或者在工程“TARGETS-Info-URL Types”里快速添加，图文配置请看[iOS集成指南](https://www.openinstall.io/doc/ios_sdk.html)  
+（scheme的值详细获取位置：openinstall应用控制台->iOS集成->iOS应用配置）
 
 ``` plist
 	<key>CFBundleURLTypes</key>
@@ -122,7 +125,8 @@
 ```
 
 ## 配置 AppKey 和 scheme
-从 [openinstall官网](https://www.openinstall.io/) 获取应用的 `AppKey` 和 `scheme`。将下面文档中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 替换
+从 [openinstall官网](https://www.openinstall.io/) 获取应用的 `AppKey` 和 `scheme`。将下面文档中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 替换。  
+（scheme的值详细获取位置：openinstall应用控制台->Android集成->Android应用配置）
 ### AppKey 配置
 在 `AndroidManifest.xml` 的 `application` 标签中添加
 
