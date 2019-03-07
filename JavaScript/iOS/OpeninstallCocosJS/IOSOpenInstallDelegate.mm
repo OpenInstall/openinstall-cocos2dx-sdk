@@ -25,7 +25,15 @@ static IOSOpenInstallDelegate *obj = nil;
 
 -(void)getWakeUpParams:(OpeninstallData *)appData{
     
-    NSDictionary *wakeupDic = @{@"bindData":appData.data?:@"",@"channelCode":appData.channelCode?:@""};
+    NSString *channelID = @"";
+    NSString *datas = @"";
+    if (appData.data) {
+        datas = [IOSOpenInstallDelegate jsonStringWithObject:appData.data];
+    }
+    if (appData.channelCode) {
+        channelID = appData.channelCode;
+    }
+    NSDictionary *wakeupDic = @{@"channelCode":channelID,@"bindData":datas};
     NSString *json = [IOSOpenInstallDelegate jsonStringWithObject:wakeupDic];
     
     if (self.isRegister) {
