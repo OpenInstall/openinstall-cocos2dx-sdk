@@ -21,7 +21,15 @@
     }
     [[OpenInstallSDK defaultManager] getInstallParmsWithTimeoutInterval:timeInterval completed:^(OpeninstallData * _Nullable appData) {
         
-        NSDictionary *installDic = @{@"bindData":appData.data?:@"",@"channelCode":appData.channelCode?:@""};
+        NSString *channelID = @"";
+        NSString *datas = @"";
+        if (appData.data) {
+            datas = [LuaOpenInstallDelegate jsonStringWithObject:appData.data];
+        }
+        if (appData.channelCode) {
+            channelID = appData.channelCode;
+        }
+        NSDictionary *installDic = @{@"channelCode":channelID,@"bindData":datas};
         NSString *json = [LuaOpenInstallDelegate jsonStringWithObject:installDic];
         NSLog(@"openinstall:iOS原生层获取到返回的安装参数为%@",json);
                 

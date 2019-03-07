@@ -25,7 +25,15 @@ static LuaOpenInstallDelegate *obj = nil;
 
 -(void)getWakeUpParams:(OpeninstallData *)appData{
     
-    NSDictionary *wakeupDic = @{@"bindData":appData.data?:@"",@"channelCode":appData.channelCode?:@""};
+    NSString *channelID = @"";
+    NSString *datas = @"";
+    if (appData.data) {
+        datas = [LuaOpenInstallDelegate jsonStringWithObject:appData.data];
+    }
+    if (appData.channelCode) {
+        channelID = appData.channelCode;
+    }
+    NSDictionary *wakeupDic = @{@"channelCode":channelID,@"bindData":datas};
     NSString *json = [LuaOpenInstallDelegate jsonStringWithObject:wakeupDic];
     
     if (self.isRegister) {

@@ -22,7 +22,7 @@ void CPOpenInstall::initOpeninstall()
 
 void CPOpenInstall::getInstallFrom(float timeout,void (*installCallback)(AppData))
 {
-    float time = 5.0;
+    float time = 10.0;
     if (timeout>0) {
         time = timeout;
     }
