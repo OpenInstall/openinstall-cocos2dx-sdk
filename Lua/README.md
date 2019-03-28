@@ -188,7 +188,7 @@ _不采用继承 `OpenInstallActivity` 的方式时，可以将 `OpenInstallActi
      print("拉起参数回调:"..result)
   end
 
-  openinstall:registerWakeupHandler(wakeUpCallBack)  
+  openinstall:registerWakeupHandler(wakeUpCallBack)
 ```
 
 ## 3 携带参数安装 (高级版功能)
