@@ -8,6 +8,7 @@ import com.fm.openinstall.listener.AppInstallAdapter;
 import com.fm.openinstall.listener.AppWakeUpAdapter;
 import com.fm.openinstall.model.AppData;
 
+import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxLuaJavaBridge;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,15 +23,20 @@ public class OpenInstallHelper {
     private static String wakeupDataHolder = null;
     private static int wakeUpLuaFunc = -1;
 
-    public static void getInstall(int s, final int luaFunc) {
+    public static void getInstall(int s, final int luaFunc, final Cocos2dxActivity cocos2dxActivity) {
 
         OpenInstall.getInstall(new AppInstallAdapter() {
             @Override
             public void onInstall(AppData appData) {
                 final String json = toJson(appData);
                 Log.d(TAG, "installData = " + json);
-                Cocos2dxLuaJavaBridge.callLuaFunctionWithString(luaFunc, json);
-                Cocos2dxLuaJavaBridge.releaseLuaFunction(luaFunc);
+                cocos2dxActivity.runOnGLThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Cocos2dxLuaJavaBridge.callLuaFunctionWithString(luaFunc, json);
+                        Cocos2dxLuaJavaBridge.releaseLuaFunction(luaFunc);
+                    }
+                });
             }
         }, s * 1000);
     }
@@ -51,13 +57,18 @@ public class OpenInstallHelper {
         });
     }
 
-    public static void registerWakeupCallback(final int luaFunc) {
+    public static void registerWakeupCallback(final int luaFunc, final Cocos2dxActivity cocos2dxActivity) {
         isRegister = true;
         wakeUpLuaFunc = luaFunc;
         if (wakeupDataHolder != null) {
             Log.d(TAG, "wakeupDataHolder = " + wakeupDataHolder);
-            Cocos2dxLuaJavaBridge.callLuaFunctionWithString(wakeUpLuaFunc, wakeupDataHolder);
-            wakeupDataHolder = null;
+            cocos2dxActivity.runOnGLThread(new Runnable() {
+                @Override
+                public void run() {
+                    Cocos2dxLuaJavaBridge.callLuaFunctionWithString(wakeUpLuaFunc, wakeupDataHolder);
+                    wakeupDataHolder = null;
+                }
+            });
         }
     }
 
@@ -71,10 +82,6 @@ public class OpenInstallHelper {
             e.printStackTrace();
         }
         return jsonObject.toString();
-    }
-
-    public static void reportEffectPoint(String pointId, int pointValue){
-        OpenInstall.reportEffectPoint(pointId, pointValue);
     }
 
 }

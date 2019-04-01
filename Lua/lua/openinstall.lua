@@ -3,7 +3,7 @@ local targetPlatform = cc.Application:getInstance():getTargetPlatform()
 
 local openinstall = class("openinstall")
 
-local helperClassName = "io/openinstall/cocos2dx/OpenInstallHelper"
+local activityClassName = "org/cocos2dx/lua/AppActivity"
 local openinstallClassName = "com/fm/openinstall/OpenInstall"
 
 function openinstall:getInstall(s, callback)
@@ -12,7 +12,7 @@ function openinstall:getInstall(s, callback)
         local luaj = require "cocos.cocos2d.luaj"
 		local args = {s, callback}
 		local signs = "(II)V"
-		local ok,ret = luaj.callStaticMethod(helperClassName, "getInstall", args, signs)
+		local ok,ret = luaj.callStaticMethod(activityClassName, "getInstall", args, signs)
 		if not ok then
 			print("call getInstall fail"..ret)
 		end
@@ -34,7 +34,7 @@ function openinstall:registerWakeupHandler(callback)
         local luaj = require "cocos.cocos2d.luaj"
 		local args = {callback}
 		local signs = "(I)V"
-		local ok,ret = luaj.callStaticMethod(helperClassName, "registerWakeupCallback", args, signs)
+		local ok,ret = luaj.callStaticMethod(activityClassName, "registerWakeupCallback", args, signs)
 		if not ok then
 			print("call registerWakeupHandler fail"..ret)
 		end
@@ -75,7 +75,7 @@ function openinstall:reportEffectPoint(pointId, pointValue)
         local luaj = require "cocos.cocos2d.luaj"
 		local args = {pointId, pointValue}
 		local signs = "(Ljava/lang/String;I)V"
-		local ok,ret = luaj.callStaticMethod(helperClassName, "reportEffectPoint", args, signs)
+		local ok,ret = luaj.callStaticMethod(activityClassName, "reportEffectPoint", args, signs)
 		if not ok then
             print("call reportEffectPoint fail"..ret)
 		end
