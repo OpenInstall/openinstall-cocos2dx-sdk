@@ -41,7 +41,7 @@ public class OpenInstallHelper {
         }, s * 1000);
     }
 
-    public static void getWakeup(Intent intent) {
+    public static void getWakeup(Intent intent, final Cocos2dxActivity cocos2dxActivity) {
         OpenInstall.getWakeUp(intent, new AppWakeUpAdapter() {
             @Override
             public void onWakeUp(AppData appData) {
@@ -52,7 +52,13 @@ public class OpenInstallHelper {
                     wakeupDataHolder = json;
                     return;
                 }
-                Cocos2dxLuaJavaBridge.callLuaFunctionWithString(wakeUpLuaFunc, json);
+                cocos2dxActivity.runOnGLThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Cocos2dxLuaJavaBridge.callLuaFunctionWithString(wakeUpLuaFunc, json);
+                    }
+                });
+
             }
         });
     }

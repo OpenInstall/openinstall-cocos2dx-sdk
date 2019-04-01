@@ -39,14 +39,14 @@ public class OpenInstallActivity extends Cocos2dxActivity {
         super.onCreate(savedInstanceState);
         cocos2dxActivity = this;
         OpenInstall.init(this);
-        OpenInstallHelper.getWakeup(getIntent());
+        OpenInstallHelper.getWakeup(getIntent(), cocos2dxActivity);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        OpenInstallHelper.getWakeup(intent);
+        OpenInstallHelper.getWakeup(intent, cocos2dxActivity);
     }
 
     public static void getInstall(int s, int luaFunc) {
