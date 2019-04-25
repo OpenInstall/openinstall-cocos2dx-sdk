@@ -62,7 +62,7 @@ function openinstall:reportRegister()
 	end
     if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) then
         local luaoc = require "cocos.cocos2d.luaoc"
-        local ok, ret = luaoc.callStaticMethod("LuaOpenInstallBridge","reportRegister",{})
+        local ok, ret = luaoc.callStaticMethod("LuaOpenInstallBridge","reportRegister")
         if not ok then
             print("luaoc reportRegister error:"..ret)
         end
