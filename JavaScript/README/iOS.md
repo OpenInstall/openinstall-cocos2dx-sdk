@@ -11,20 +11,20 @@
 
 在项目中 `ios` 文件夹下的 `Info.plist` 文件中配置appKey键值对，如下：
 
-``` plist
+``` xml
   	<key>com.openinstall.APP_KEY</key>
 	<string>从openinstall官网后台获取应用的appKey</string>
 ```
 
 在 `AppController.mm` 中，增加头文件的引用:
 
-```obj
+``` objc
 #import "Openinstall.h"
 ```
 
 在 `AppController.mm` 中尽量早的调用openinstall初始化方法:
 
-```obj
+``` objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
    
 //尽量早的去调用
@@ -52,7 +52,7 @@
 
 在 `AppController.mm` 中添加通用链接(Universal Link)回调方法：
 
-```obj
+``` objc
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
     //判断是否通过OpenInstall Universal Link 唤起App
     if ([Openinstall setUserActivity:userActivity]) {
@@ -68,7 +68,7 @@
 在 `Info.plist` 文件中，在`CFBundleURLTypes`数组中添加应用对应的`scheme`，或者在工程“TARGETS-Info-URL Types”里快速添加，图文配置请看[iOS集成指南](https://www.openinstall.io/doc/ios_sdk.html)  
 （scheme的值详细获取位置：openinstall应用控制台->iOS集成->iOS应用配置）
 
-``` plist
+``` xml
 	<key>CFBundleURLTypes</key>
 	<array>
 	    <dict>
@@ -88,7 +88,7 @@
 
 在 `AppController.mm` 中添加 `scheme` 回调的方法
 
-```obj
+``` objc
 //支持目前所有版本的iOS
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
     //判断是否通过OpenInstall URL Scheme 唤起App
