@@ -1,6 +1,6 @@
 # iOS 平台配置
 
-- 将 iOS 目录下的 `OpeninstallCocos2dxLua` 文件夹拷贝到项目的 ios 目录下，然后在Xcode工程左边目录里找到ios 目录，右键通过 "Add Files to xxx" 添加 `OpeninstallCocos2dxLua` 文件夹，add的时候注意勾选“Copy items if needed”、“Create groups”
+- 将 iOS 目录下的 `OpeninstallCocos2dxLua` 文件夹拷贝到项目的 `ios` 目录下，然后在Xcode工程左边目录里找到 `ios` 目录，右键通过 "Add Files to xxx" 添加 `OpeninstallCocos2dxLua` 文件夹，add的时候注意勾选“Copy items if needed”、“Create groups”
 
 ## 相关配置
 
@@ -16,7 +16,7 @@
 
 在app `AppController.mm` 文件中引入头文件
 ```objc
-#import "OpeninstallCocosLua/Openinstall.h"
+#import "Openinstall.h"
 ```
 
 在方法`application:didFinishLaunchingWithOptions:`中引入方法
