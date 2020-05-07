@@ -68,7 +68,7 @@ void AndroidOpenInstall::getInstall(float s, void (*installCallback)(AppData app
                                                                "()V");
     jobject jAppInstallCallback = methodInfo_init.env->NewObject(clsAppInstallCallback,
                                                                  methodID_init);
-    int timeout = static_cast<int>(s * 1000);
+    int timeout = static_cast<int>(s);
     // 设置回调
     setAppInstallCallbackMethod(installCallback);
     // 调用方法
