@@ -38,7 +38,7 @@ public class OpenInstallHelper {
                     }
                 });
             }
-        }, s * 1000);
+        }, s);
     }
 
     public static void getWakeup(Intent intent, final Cocos2dxActivity cocos2dxActivity) {
