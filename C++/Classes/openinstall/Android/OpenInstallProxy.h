@@ -6,7 +6,7 @@
 #define OPENINSTALLPROXY_H
 
 #include <jni.h>
-#include "openinstall/AppData.h"
+#include "../AppData.h"
 
 using namespace openInstall2dx;
 

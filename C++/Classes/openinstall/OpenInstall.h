@@ -14,7 +14,7 @@ namespace openInstall2dx {
         
     public:
         
-        static void init();
+        static void init(bool Ad);
         
         static void getInstall(float timeout,void (*installCallback)(AppData appData));
         

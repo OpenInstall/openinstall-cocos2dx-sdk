@@ -5,8 +5,8 @@
 #include "AndroidOpenInstall.h"
 
 #include <jni.h>
-#include "platform/android/jni/JniHelper.h"
-#include "openinstall/Android/OpenInstallProxy.h"
+#include "../../../cocos2d/cocos/platform/android/jni/JniHelper.h"
+#include "OpenInstallProxy.h"
 #include <android/log.h>
 
 #define  LOG_TAG    "OpenInstall"
@@ -14,13 +14,11 @@
 
 using namespace cocos2d;
 
-void AndroidOpenInstall::init() {
-
+void AndroidOpenInstall::init(bool Ad) {
     JniMethodInfo methodInfo_init;
-    if (!JniHelper::getStaticMethodInfo(methodInfo_init,
-                                        "com/fm/openinstall/OpenInstall",
-                                        "init", "(Landroid/content/Context;)V")) {
-        LOGD("get OpenInstall.init JniMethodInfo failed");
+    if (!JniHelper::getStaticMethodInfo(methodInfo_init, "io/openinstall/sdk/OpenInstallHelper",
+                                        "init", "(Landroid/app/Activity;Z)V")) {
+        LOGD("get OpenInstallHelper.init JniMethodInfo failed");
         return;
     }
 
@@ -36,14 +34,17 @@ void AndroidOpenInstall::init() {
             methodInfo_getContext.classID,
             methodInfo_getContext.methodID);
 
-    methodInfo_init.env->CallStaticVoidMethod(methodInfo_init.classID, methodInfo_init.methodID,
-                                              jContext);
+    jclass clsOpenInstallHelper = methodInfo_init.env->FindClass(
+            "io/openinstall/sdk/OpenInstallHelper");
+    methodInfo_init.env->CallStaticVoidMethod(clsOpenInstallHelper, methodInfo_init.methodID,
+                                              jContext, Ad);
 
     methodInfo_getContext.env->DeleteLocalRef(jContext);
 
-    LOGD("call OpenInstall.init success");
+    LOGD("call init success");
 
 }
+
 
 void AndroidOpenInstall::getInstall(float s, void (*installCallback)(AppData appData)) {
 
