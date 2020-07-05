@@ -17,6 +17,10 @@
 
 using namespace openInstall2dx;
 
+void OpenInstall::init() {
+    init(false);
+}
+
 void OpenInstall::init(bool Ad) {
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)

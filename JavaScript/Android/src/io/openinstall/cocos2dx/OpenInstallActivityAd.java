@@ -29,36 +29,45 @@ import android.os.Bundle;
 import com.fm.openinstall.OpenInstall;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
+import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class OpenInstallActivityAd extends Cocos2dxActivity {
 
-    private static Cocos2dxActivity cocos2dxActivity = null;
-    private static CountDownLatch countDownLatch = new CountDownLatch(1);
-
+    private static OpenInstallActivityAd app = null;
+    private static CountDownLatch downLatch = new CountDownLatch(1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cocos2dxActivity = this;
-//        OpenInstall.init(this);
 
-        OpenInstall.initWithPermission(this, new Runnable() {
+        app = this;
+        OpenInstall.initWithPermission(app, new Runnable() {
             @Override
             public void run() {
-                countDownLatch.countDown();
-                OpenInstallHelper.getWakeup(getIntent(), cocos2dxActivity);
+                downLatch.countDown();
+                OpenInstallHelper.getWakeup(getIntent(), app);
             }
         });
 
     }
 
     @Override
+    public Cocos2dxGLSurfaceView onCreateView() {
+        Cocos2dxGLSurfaceView glSurfaceView = new Cocos2dxGLSurfaceView(this);
+        // TestCpp should create stencil buffer
+        glSurfaceView.setEGLConfigChooser(5, 6, 5, 0, 16, 8);
+
+        return glSurfaceView;
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        OpenInstallHelper.getWakeup(intent, cocos2dxActivity);
+        //
+        OpenInstallHelper.getWakeup(intent, app);
     }
 
     @Override
@@ -67,24 +76,18 @@ public class OpenInstallActivityAd extends Cocos2dxActivity {
         OpenInstall.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public static void getInstall(int s, int luaFunc) {
+    public static void getInstall(int s) {
         checkInit();
-        OpenInstallHelper.getInstall(s, luaFunc, cocos2dxActivity);
+        OpenInstallHelper.getInstall(s, app);
     }
 
-    public static void registerWakeupCallback(int luaFunc) {
-        OpenInstallHelper.registerWakeupCallback(luaFunc, cocos2dxActivity);
-    }
-
-    public static void reportEffectPoint(String pointId, int pointValue) {
-        checkInit();
-        OpenInstall.reportEffectPoint(pointId, pointValue);
+    public static void registerWakeup() {
+        OpenInstallHelper.registerWakeupCallback(app);
     }
 
     private static void checkInit() {
-        //等待，防止权限请求还没有初始化
         try {
-            countDownLatch.await(60, TimeUnit.SECONDS);
+            downLatch.await(60, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
