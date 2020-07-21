@@ -16,6 +16,10 @@
     [OpenInstallSDK initWithDelegate:[IOSOpenInstallDelegate defaultManager]];
 }
 
++(void)+(void)initWithAdvertisingId:(NSString *_Nullable)adid{
+    [OpenInstallSDK initWithDelegate:[IOSOpenInstallDelegate defaultManager] advertisingId:adid];
+}
+
 +(BOOL)setUserActivity:(NSUserActivity*_Nullable)userActivity{
     
     if ([OpenInstallSDK continueUserActivity:userActivity]) {

@@ -11,6 +11,8 @@
 
 +(void)init;
 
++(void)initWithAdvertisingId:(NSString *_Nullable)adid;
+
 +(BOOL)setUserActivity:(NSUserActivity*_Nullable)userActivity;
 
 +(BOOL)setLinkURL:(NSURL *_Nullable)URL;

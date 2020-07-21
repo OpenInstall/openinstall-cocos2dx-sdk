@@ -16,6 +16,10 @@
     [OpenInstallSDK initWithDelegate:[LuaOpenInstallDelegate defaultManager]];
 }
 
++(void)initWithAdvertisingId:(NSString *_Nullable)adid{
+    [OpenInstallSDK initWithDelegate:[LuaOpenInstallDelegate defaultManager] advertisingId:adid];
+}
+
 +(BOOL)setUserActivity:(NSUserActivity*_Nullable)userActivity{
     
     if ([OpenInstallSDK continueUserActivity:userActivity]) {
