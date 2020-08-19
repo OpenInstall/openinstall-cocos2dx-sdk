@@ -87,7 +87,7 @@ public class OpenInstallActivityAd extends Cocos2dxActivity {
 
     private static void checkInit() {
         try {
-            downLatch.await(60, TimeUnit.SECONDS);
+            downLatch.await(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
