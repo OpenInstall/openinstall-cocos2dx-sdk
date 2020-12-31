@@ -13,8 +13,12 @@ namespace openInstall2dx {
     class OpenInstall {
         
     public:
-        
+
+        static void config(bool adEnabled, char *oaid, char *gaid);
+
         static void init();
+
+        static void init(bool permission);
         
         static void getInstall(float timeout,void (*installCallback)(AppData appData));
         

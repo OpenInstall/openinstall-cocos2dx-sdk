@@ -5,7 +5,7 @@
 #ifndef ANDROID_ANDROIDOPENINSTALL_H
 #define ANDROID_ANDROIDOPENINSTALL_H
 
-#include "openinstall/AppData.h"
+#include "../AppData.h"
 
 using namespace openInstall2dx;
 
@@ -13,7 +13,9 @@ class AndroidOpenInstall {
 
 public:
 
-    static void init();
+    static void config(bool adEnabled, char *oaid, char *gaid);
+
+    static void init(bool permission);
 
     static void getInstall(float s, void (*installCallback)(AppData appData));
 

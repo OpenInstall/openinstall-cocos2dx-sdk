@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "platform/android/jni/JniHelper.h"
+#include "../../../cocos2d/cocos/platform/android/jni/JniHelper.h"
 #include "OpenInstallProxy.h"
 
 #include <android/log.h>

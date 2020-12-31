@@ -7,7 +7,7 @@
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 
-#include "openinstall/Android/AndroidOpenInstall.h"
+#include "Android/AndroidOpenInstall.h"
 
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 
@@ -17,11 +17,23 @@
 
 using namespace openInstall2dx;
 
+void OpenInstall::config(bool adEnabled, char *oaid, char *gaid){
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    AndroidOpenInstall::config(adEnabled, oaid, gaid);
+#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    // just support on android
+#endif
+}
+
 void OpenInstall::init() {
+    init(false);
+}
+
+void OpenInstall::init(bool permission) {
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 
-    AndroidOpenInstall::init();
+    AndroidOpenInstall::init(permission);
 
 #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 
