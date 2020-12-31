@@ -8,6 +8,32 @@ var openinstall = {
 
     },
 
+	config: function(adEnabled, oaid, gaid){
+		if (cc.sys.OS_ANDROID == cc.sys.os) {
+			cc.log("adEnabled = " + adEnabled + ", oaid = " + oaid +", gaid = " + gaid);
+			if(null == oaid){
+				oaid = "null";
+			}
+			if(null == gaid){
+				gaid = "null";
+			}
+			jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
+                "config", "(ZLjava/lang/String;Ljava/lang/String;)V", adEnabled, oaid, gaid);   
+        } else if(cc.sys.OS_IOS == cc.sys.os){
+            //cc.log("此方法仅适用于Android平台");
+        }
+	},
+
+	init: function(permission){
+		if (cc.sys.OS_ANDROID == cc.sys.os) {
+			cc.log("permission = " + permission);
+			jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
+                "init", "(Z)V", permission);   
+        } else if(cc.sys.OS_IOS == cc.sys.os){
+            //cc.log("此方法仅适用于Android平台");
+        }
+	},
+
     getInstall: function (s, callback) {
         this.installCallback = callback;
         if (cc.sys.OS_ANDROID == cc.sys.os) {
