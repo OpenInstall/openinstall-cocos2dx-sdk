@@ -75,14 +75,14 @@ _如果有其他的逻辑需要加入 `AppActivity` 中，可以采用继承 `Op
 
 #### 隐私政策规范
 需要确保用户同意《隐私政策》之后，再初始化 openinstall。参考 [应用合规指南](https://www.openinstall.io/doc/rules.html) 
-``` js
+``` cpp
     openInstall2dx::OpenInstall::init();
 ```
 初始化之后再调用其它接口，下面的`config` 接口除外
 
 #### 广告平台
 1、针对广告平台接入，新增配置接口，在调用 `init` 之前调用。参考 [广告平台对接Android集成指引](https://www.openinstall.io/doc/ad_android.html)
-``` js
+``` cpp
     /**
     * adEnabled 为 true 表示 openinstall 需要获取广告追踪相关参数，默认为 false
     * oaid 为 null 时，表示交由 openinstall 获取 oaid， 默认为 null
@@ -91,7 +91,7 @@ _如果有其他的逻辑需要加入 `AppActivity` 中，可以采用继承 `Op
     openInstall2dx::OpenInstall::config(true, "通过移动安全联盟获取到的 oaid", "通过 google api 获取到的 advertisingId");
 ```
 例如： 开发者自己获取到了 oaid，但是需要 openinstall 获取 gaid，则调用代码为
-``` js
+``` cpp
     // f32a09dc-3312-d43e-6583-62fac13f33ae 是通过移动安全联盟获取到的 oaid
     openInstall2dx::OpenInstall::config(true, "f32a09dc-3312-d43e-6583-62fac13f33ae", nullptr);
 ```
@@ -100,7 +100,7 @@ _如果有其他的逻辑需要加入 `AppActivity` 中，可以采用继承 `Op
 在 `AndroidManifest.xml` 中添加权限声明 `<uses-permission android:name="android.permission.READ_PHONE_STATE"/>` 
 
 3、允许插件申请权限并初始化
-``` js
+``` cpp
     /**
     * 调用初始化，允许 openinstall 请求权限
     * permission 为 true，表示允许 openinstall 申请权限，以便获取 imei

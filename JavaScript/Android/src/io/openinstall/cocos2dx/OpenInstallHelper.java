@@ -25,6 +25,7 @@ public class OpenInstallHelper {
     private static volatile boolean initialized = false;
     private static String wakeupDataHolder = null;
     private static Intent wakeupIntent = null;
+    private static Configuration configuration = null;
 
     private static String REQUIRE_OPENINSTALL = "var openinstall = require(\"OpenInstall\");";
     //高版本Cocos Creator构建的项目请使用此语句
@@ -33,14 +34,34 @@ public class OpenInstallHelper {
     private static String CALLBACK_INSTALL = "_installCallback";
     private static String CALLBACK_WAKEUP = "_wakeupCallback";
 
+    public static void config(boolean adEnabled, String oaid, String gaid) {
+        Configuration.Builder builder = new Configuration.Builder();
+        builder.adEnabled(adEnabled);
+        oaid = setNull(oaid);
+        builder.oaid(oaid);
+        gaid = setNull(gaid);
+        builder.gaid(gaid);
+        Log.d("OpenInstall", String.format("adEnabled = %s, oaid = %s, gaid = %s",
+                adEnabled, oaid == null ? "NULL" : oaid, gaid == null ? "NULL" : gaid));
+        configuration = builder.build();
+    }
+
+    private static String setNull(String res) {
+        // 传入 null 或者 未定义，设置为 null
+        if (res == null || res.equalsIgnoreCase("null")
+                || res.equalsIgnoreCase("undefined")) {
+            return null;
+        }
+        return res;
+    }
+
     /**
      * 插件调用openinstall初始化
      *
      * @param permission
      * @param activity
-     * @param configuration
      */
-    public static void init(boolean permission, Cocos2dxActivity activity, Configuration configuration) {
+    public static void init(boolean permission, Cocos2dxActivity activity) {
         callInit = true;
         if (permission) {
             // openinstall 请求 READ_PHONE_STATE 权限，获取 IMEI
@@ -62,6 +83,7 @@ public class OpenInstallHelper {
             OpenInstall.getWakeUp(wakeupIntent, new AppWakeUpAdapter() {
                 @Override
                 public void onWakeUp(AppData appData) {
+                    wakeupIntent = null;
                     final String json = toJson(appData);
                     Log.d(TAG, json);
                     if (!registerWakeup) {
@@ -75,7 +97,7 @@ public class OpenInstallHelper {
                             callback(CALLBACK_WAKEUP, json);
                         }
                     });
-                    wakeupIntent = null;
+
                 }
             });
         }
@@ -142,7 +164,7 @@ public class OpenInstallHelper {
     public static void registerWakeupCallback(final Cocos2dxActivity cocos2dxActivity) {
         if (!callInit) {
             Log.d(TAG, "未调用 init，插件使用默认配置初始化");
-            init(false, cocos2dxActivity, null);
+            init(false, cocos2dxActivity);
         }
         registerWakeup = true;
         if (wakeupDataHolder != null) {
@@ -171,8 +193,8 @@ public class OpenInstallHelper {
     }
 
     private static void callback(String method, String data) {
-//        String evalStr = REQUIRE_OPENINSTALL + String.format(CALLBACK_PATTERN, method, data);
-        String evalStr = String.format(CALLBACK_PATTERN, method, data);
+        String evalStr = REQUIRE_OPENINSTALL + String.format(CALLBACK_PATTERN, method, data);
+//      String evalStr = String.format(CALLBACK_PATTERN, method, data);
         Log.d(TAG, evalStr);
         Cocos2dxJavascriptJavaBridge.evalString(evalStr);
     }

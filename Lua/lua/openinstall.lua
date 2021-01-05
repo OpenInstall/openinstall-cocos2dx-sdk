@@ -6,6 +6,38 @@ local openinstall = class("openinstall")
 local activityClassName = "org/cocos2dx/lua/AppActivity"
 local openinstallClassName = "com/fm/openinstall/OpenInstall"
 
+function openinstall:config(adEnabled, oaid, gaid)
+	print("call config start")
+	if(oaid == nil) then
+		oaid = "null"
+	end
+	if(gaid == nil) then
+		gaid = "null"
+	end
+	if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
+        local luaj = require "cocos.cocos2d.luaj"
+		local args = {adEnabled,oaid,gaid}
+		local signs = "(ZLjava/lang/String;Ljava/lang/String;)V"
+		local ok,ret = luaj.callStaticMethod(activityClassName, "config", args, signs)
+		if not ok then
+			print("call config fail"..ret)
+		end
+	end
+end
+
+function openinstall:init(permission)
+	print("call init start")
+	if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
+        local luaj = require "cocos.cocos2d.luaj"
+		local args = {permission}
+		local signs = "(Z)V"
+		local ok,ret = luaj.callStaticMethod(activityClassName, "init", args, signs)
+		if not ok then
+			print("call init fail"..ret)
+		end
+	end
+end
+
 function openinstall:getInstall(s, callback)
 	print("call getInstall start")
 	if (cc.PLATFORM_OS_ANDROID == targetPlatform) then

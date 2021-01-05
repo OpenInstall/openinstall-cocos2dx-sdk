@@ -34,19 +34,26 @@ public class OpenInstallActivity extends Cocos2dxActivity {
 
     private static Cocos2dxActivity cocos2dxActivity = null;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         cocos2dxActivity = this;
-        OpenInstall.init(this);
         OpenInstallHelper.getWakeup(getIntent(), cocos2dxActivity);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
         OpenInstallHelper.getWakeup(intent, cocos2dxActivity);
+    }
+
+    public static void config(boolean adEnabled, String oaid, String gaid){
+        OpenInstallHelper.config(adEnabled, oaid, gaid);
+    }
+
+    public static void init(boolean permission){
+        OpenInstallHelper.init(permission, cocos2dxActivity);
     }
 
     public static void getInstall(int s, int luaFunc) {
@@ -57,8 +64,18 @@ public class OpenInstallActivity extends Cocos2dxActivity {
         OpenInstallHelper.registerWakeupCallback(luaFunc, cocos2dxActivity);
     }
 
+    /**
+     * lua 直接调用 OpenInstall，value 值对应的 long 不好设置
+     * @param pointId
+     * @param pointValue
+     */
     public static void reportEffectPoint(String pointId, int pointValue){
         OpenInstall.reportEffectPoint(pointId, pointValue);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        OpenInstall.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }

@@ -36,7 +36,6 @@ import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 public class OpenInstallActivity extends Cocos2dxActivity {
 
     private static OpenInstallActivity app = null;
-    private static Configuration configuration = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,27 +46,11 @@ public class OpenInstallActivity extends Cocos2dxActivity {
     }
 
     public static void config(boolean adEnabled, String oaid, String gaid) {
-        Configuration.Builder builder = new Configuration.Builder();
-        builder.adEnabled(adEnabled);
-        oaid = setNull(oaid);
-        builder.oaid(oaid);
-        gaid = setNull(gaid);
-        builder.gaid(gaid);
-        Log.d("OpenInstall", String.format("adEnabled = %s, oaid = %s, gaid = %s", adEnabled, oaid==null?"NULL":oaid, gaid==null?"NULL":gaid));
-        configuration = builder.build();
-    }
-
-    private static String setNull(String res){
-        // 传入 null 或者 未定义，设置为 null
-        if(res == null || res.equalsIgnoreCase("null")
-                || res.equalsIgnoreCase("undefined")){
-            return null;
-        }
-        return res;
+        OpenInstallHelper.config(adEnabled, oaid, gaid);
     }
 
     public static void init(boolean permission) {
-        OpenInstallHelper.init(permission, app, configuration);
+        OpenInstallHelper.init(permission, app);
     }
 
     @Override
@@ -98,7 +81,5 @@ public class OpenInstallActivity extends Cocos2dxActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // 将权限请求结果告知 openinstall
         OpenInstall.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // 告知 OpenInstallHelper，openinstall 已经接收到了回调并调用了初始化
-        OpenInstallHelper.initialized(this);
     }
 }
