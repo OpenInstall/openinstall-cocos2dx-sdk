@@ -25,6 +25,9 @@ package io.openinstall.cocos2dx;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import com.fm.openinstall.OpenInstall;
 
@@ -33,7 +36,8 @@ import org.cocos2dx.lib.Cocos2dxActivity;
 public class OpenInstallActivity extends Cocos2dxActivity {
 
     private static Cocos2dxActivity cocos2dxActivity = null;
-
+    // 确保 init 在 UI 线程调用
+    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,20 +52,41 @@ public class OpenInstallActivity extends Cocos2dxActivity {
         OpenInstallHelper.getWakeup(intent, cocos2dxActivity);
     }
 
-    public static void config(boolean adEnabled, String oaid, String gaid){
-        OpenInstallHelper.config(adEnabled, oaid, gaid);
+    public static void config(final boolean adEnabled, final String oaid, final String gaid){
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstallHelper.config(adEnabled, oaid, gaid);
+            }
+        });
     }
 
-    public static void init(boolean permission){
-        OpenInstallHelper.init(permission, cocos2dxActivity);
+    public static void init(final boolean permission){
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstallHelper.init(permission, cocos2dxActivity);
+            }
+        });
+
     }
 
-    public static void getInstall(int s, int luaFunc) {
-        OpenInstallHelper.getInstall(s, luaFunc, cocos2dxActivity);
+    public static void getInstall(final int s, final int luaFunc) {
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstallHelper.getInstall(s, luaFunc, cocos2dxActivity);
+            }
+        });
     }
 
-    public static void registerWakeupCallback(int luaFunc){
-        OpenInstallHelper.registerWakeupCallback(luaFunc, cocos2dxActivity);
+    public static void registerWakeupCallback(final int luaFunc){
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstallHelper.registerWakeupCallback(luaFunc, cocos2dxActivity);
+            }
+        });
     }
 
     /**

@@ -61,11 +61,16 @@ public class OpenInstallHelper {
      * @param permission
      * @param activity
      */
-    public static void init(boolean permission, Cocos2dxActivity activity) {
+    public static void init(boolean permission, final Cocos2dxActivity activity) {
         callInit = true;
         if (permission) {
             // openinstall 请求 READ_PHONE_STATE 权限，获取 IMEI
-            OpenInstall.initWithPermission(activity, configuration);
+            OpenInstall.initWithPermission(activity, configuration, new Runnable() {
+                @Override
+                public void run() {
+                    initialized(activity);
+                }
+            });
         } else {
             OpenInstall.init(activity, configuration);
             initialized(activity);
@@ -77,7 +82,7 @@ public class OpenInstallHelper {
      *
      * @param activity
      */
-    public static void initialized(final Cocos2dxActivity activity) {
+    private static void initialized(final Cocos2dxActivity activity) {
         initialized = true;
         if (wakeupIntent != null) {
             OpenInstall.getWakeUp(wakeupIntent, new AppWakeUpAdapter() {
@@ -194,7 +199,7 @@ public class OpenInstallHelper {
 
     private static void callback(String method, String data) {
         String evalStr = REQUIRE_OPENINSTALL + String.format(CALLBACK_PATTERN, method, data);
-//      String evalStr = String.format(CALLBACK_PATTERN, method, data);
+//        String evalStr = String.format(CALLBACK_PATTERN, method, data);
         Log.d(TAG, evalStr);
         Cocos2dxJavascriptJavaBridge.evalString(evalStr);
     }

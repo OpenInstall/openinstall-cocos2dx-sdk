@@ -25,9 +25,9 @@ package io.openinstall.cocos2dx;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 
-import com.fm.openinstall.Configuration;
 import com.fm.openinstall.OpenInstall;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
@@ -36,6 +36,7 @@ import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 public class OpenInstallActivity extends Cocos2dxActivity {
 
     private static OpenInstallActivity app = null;
+    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,21 +46,23 @@ public class OpenInstallActivity extends Cocos2dxActivity {
         OpenInstallHelper.getWakeup(getIntent(), app);
     }
 
-    public static void config(boolean adEnabled, String oaid, String gaid) {
-        OpenInstallHelper.config(adEnabled, oaid, gaid);
+    public static void config(final boolean adEnabled, final String oaid, final String gaid) {
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstallHelper.config(adEnabled, oaid, gaid);
+            }
+        });
+
     }
 
-    public static void init(boolean permission) {
-        OpenInstallHelper.init(permission, app);
-    }
-
-    @Override
-    public Cocos2dxGLSurfaceView onCreateView() {
-        Cocos2dxGLSurfaceView glSurfaceView = new Cocos2dxGLSurfaceView(this);
-        // TestCpp should create stencil buffer
-        glSurfaceView.setEGLConfigChooser(5, 6, 5, 0, 16, 8);
-
-        return glSurfaceView;
+    public static void init(final boolean permission) {
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstallHelper.init(permission, app);
+            }
+        });
     }
 
     @Override
@@ -68,12 +71,22 @@ public class OpenInstallActivity extends Cocos2dxActivity {
         OpenInstallHelper.getWakeup(intent, app);
     }
 
-    public static void getInstall(int s) {
-        OpenInstallHelper.getInstall(s, app);
+    public static void getInstall(final int s) {
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstallHelper.getInstall(s, app);
+            }
+        });
     }
 
     public static void registerWakeup() {
-        OpenInstallHelper.registerWakeupCallback(app);
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstallHelper.registerWakeupCallback(app);
+            }
+        });
     }
 
     @Override

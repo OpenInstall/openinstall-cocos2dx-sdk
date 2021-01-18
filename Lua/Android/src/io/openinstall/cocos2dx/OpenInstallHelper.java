@@ -28,7 +28,7 @@ public class OpenInstallHelper {
     private static int wakeUpLuaFunc = -1;
     private static Configuration configuration = null;
 
-    public static void config(boolean adEnabled, String oaid, String gaid){
+    public static void config(boolean adEnabled, String oaid, String gaid) {
         Configuration.Builder builder = new Configuration.Builder();
         builder.adEnabled(adEnabled);
         oaid = setNull(oaid);
@@ -36,33 +36,34 @@ public class OpenInstallHelper {
         gaid = setNull(gaid);
         builder.gaid(gaid);
         Log.d(TAG, String.format("Configuration : adEnabled = %b, oaid = %s, gaid = %s",
-                adEnabled, oaid==null?"NULL":oaid, gaid==null?"NULL":gaid));
+                adEnabled, oaid == null ? "NULL" : oaid, gaid == null ? "NULL" : gaid));
         configuration = builder.build();
     }
 
-    private static String setNull(String res){
+    private static String setNull(String res) {
         // 传入 null 或者 未定义，设置为 null
-        if(res == null || res.equalsIgnoreCase("null")
-                || res.equalsIgnoreCase("nil")){
+        if (res == null || res.equalsIgnoreCase("null")
+                || res.equalsIgnoreCase("nil")) {
             return null;
         }
         return res;
     }
 
-    public static void init(boolean permission, final Cocos2dxActivity activity){
+    public static void init(final boolean permission, final Cocos2dxActivity activity) {
         Log.d(TAG, "permission = " + permission);
         callInit = true;
-        if(permission){
+        if (permission) {
             OpenInstall.initWithPermission(activity, configuration, new Runnable() {
                 @Override
                 public void run() {
                     initialized(activity);
                 }
             });
-        }else{
+        } else {
             OpenInstall.init(activity);
             initialized(activity);
         }
+
     }
 
     private static void initialized(final Cocos2dxActivity activity) {
@@ -108,7 +109,7 @@ public class OpenInstallHelper {
     }
 
     public static void getWakeup(Intent intent, final Cocos2dxActivity cocos2dxActivity) {
-        if(initialized) {
+        if (initialized) {
             OpenInstall.getWakeUp(intent, new AppWakeUpAdapter() {
                 @Override
                 public void onWakeUp(AppData appData) {
@@ -128,14 +129,14 @@ public class OpenInstallHelper {
 
                 }
             });
-        }else{
+        } else {
             wakeupIntent = intent;
         }
     }
 
     public static void registerWakeupCallback(final int luaFunc, final Cocos2dxActivity cocos2dxActivity) {
         wakeUpLuaFunc = luaFunc;
-        if(!callInit){
+        if (!callInit) {
             Log.d(TAG, "未调用 init，插件使用默认配置初始化");
             init(false, cocos2dxActivity);
         }
