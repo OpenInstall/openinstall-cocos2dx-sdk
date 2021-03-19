@@ -27,29 +27,28 @@ package io.openinstall.sdk;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.fm.openinstall.OpenInstall;
-
 import org.cocos2dx.lib.Cocos2dxActivity;
 
 public class OpenInstallActivity extends Cocos2dxActivity {
-
-    AppWakeUpCallback wakeUpCallback = new AppWakeUpCallback();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.setEnableVirtualButton(false);
         super.onCreate(savedInstanceState);
 
-//        OpenInstall.init(this);
-
-        OpenInstall.getWakeUp(getIntent(), wakeUpCallback);
+        OpenInstallHelper.wakeup(getIntent());
 
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        OpenInstall.getWakeUp(intent, wakeUpCallback);
+        OpenInstallHelper.wakeup(intent);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        OpenInstallHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }

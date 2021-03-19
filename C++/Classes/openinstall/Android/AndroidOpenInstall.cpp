@@ -14,7 +14,7 @@
 
 using namespace cocos2d;
 
-void AndroidOpenInstall::config(bool adEnabled, char *oaid, char *gaid){
+void AndroidOpenInstall::config(bool adEnabled, char *oaid, char *gaid) {
     JniMethodInfo methodInfo_config;
     if (!JniHelper::getStaticMethodInfo(methodInfo_config, "io/openinstall/sdk/OpenInstallHelper",
                                         "config", "(ZLjava/lang/String;Ljava/lang/String;)V")) {
@@ -23,7 +23,8 @@ void AndroidOpenInstall::config(bool adEnabled, char *oaid, char *gaid){
     }
     jstring jOaid = methodInfo_config.env->NewStringUTF(oaid);
     jstring jGaid = methodInfo_config.env->NewStringUTF(gaid);
-    methodInfo_config.env->CallStaticVoidMethod(methodInfo_config.classID, methodInfo_config.methodID,
+    methodInfo_config.env->CallStaticVoidMethod(methodInfo_config.classID,
+                                                methodInfo_config.methodID,
                                                 adEnabled, jOaid, jGaid);
 
     LOGD("call config success");
@@ -63,36 +64,21 @@ void AndroidOpenInstall::getInstall(float s, void (*installCallback)(AppData app
 
     JniMethodInfo methodInfo_getInstall;
     if (!JniHelper::getStaticMethodInfo(methodInfo_getInstall,
-                                        "com/fm/openinstall/OpenInstall",
+                                        "io/openinstall/sdk/OpenInstallHelper",
                                         "getInstall",
-                                        "(Lcom/fm/openinstall/listener/AppInstallListener;I)V")) {
-        LOGD("get OpenInstall.getInstall JniMethodInfo failed");
+                                        "(I)V")) {
+        LOGD("get OpenInstallHelper.getInstall JniMethodInfo failed");
         return;
     }
-    // 创建 AppInstallCallback 实例
-    JniMethodInfo methodInfo_init;
-    if (!JniHelper::getMethodInfo(methodInfo_init, "io/openinstall/sdk/AppInstallCallback",
-                                  "<init>", "()V")) {
-        LOGD("get AppInstallCallback<init> JniMethodInfo failed");
-        return;
-    }
-    jclass clsAppInstallCallback = methodInfo_init.env->FindClass(
-            "io/openinstall/sdk/AppInstallCallback");
-    jmethodID methodID_init = methodInfo_init.env->GetMethodID(clsAppInstallCallback, "<init>",
-                                                               "()V");
-    jobject jAppInstallCallback = methodInfo_init.env->NewObject(clsAppInstallCallback,
-                                                                 methodID_init);
     int timeout = static_cast<int>(s);
     // 设置回调
     setAppInstallCallbackMethod(installCallback);
     // 调用方法
     methodInfo_getInstall.env->CallStaticVoidMethod(methodInfo_getInstall.classID,
                                                     methodInfo_getInstall.methodID,
-                                                    jAppInstallCallback, timeout);
-    // 释放
-    methodInfo_init.env->DeleteLocalRef(jAppInstallCallback);
+                                                    timeout);
 
-    LOGD("call OpenInstall.getInstall success");
+    LOGD("call OpenInstallHelper.getInstall success");
 }
 
 void AndroidOpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData)) {
