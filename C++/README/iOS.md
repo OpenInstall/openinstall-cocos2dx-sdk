@@ -104,3 +104,7 @@ __注意__：当 AppID 重新编辑过之后，需要更新相应的 mobileprovi
 }
 
 ```
+
+#### 广告平台对接
+
+请参考详细文档 [iOS集成指引](https://www.openinstall.io/doc/ad_ios.html)，在 `Classes/openinstall/iOS/CPOpenInstall.mm` 中修改初始化方法，加入广告相关API。

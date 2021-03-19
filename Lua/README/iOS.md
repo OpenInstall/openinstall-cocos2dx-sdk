@@ -116,3 +116,8 @@
     return YES;
 }
 ```
+
+### 广告平台对接
+
+请参考详细文档 [iOS集成指引](https://www.openinstall.io/doc/ad_ios.html)，在  `AppController.mm` 中修改初始化方法 `[Openinstall init]`，加入广告相关API。
+
