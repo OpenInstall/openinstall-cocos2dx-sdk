@@ -41,8 +41,8 @@ __注意__：当 AppID 重新编辑过之后，需要更新相应的 mobileprovi
     return YES;
 }
 ```
-
-**openinstall完全兼容微信openSDK1.8.6以上版本的通用链接跳转功能，注意微信SDK初始化方法中，传入正确格式的universal link链接：**  
+**以下配置为可选项**  
+openinstall可兼容微信openSDK1.8.6以上版本的通用链接跳转功能，注意微信SDK初始化方法中，传入正确格式的universal link链接：  
 
 ``` objc
 //your_wxAppID从微信后台获取，yourAppkey从openinstall后台获取
