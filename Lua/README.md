@@ -58,7 +58,7 @@ SDK 会自动完成访问量、点击量、安装量、活跃量、留存率等�
   openinstall:reportEffectPoint("effect_test", 1)
 ```
 
-## 导出apk/api包并上传
+## 导出apk/ipa包并上传
 - 代码集成完毕后，需要导出安装包上传openinstall后台，openinstall会自动完成所有的应用配置工作。  
 - 上传完成后即可开始在线模拟测试，体验完整的App安装/拉起流程；待测试无误后，再完善下载配置信息。  
 
