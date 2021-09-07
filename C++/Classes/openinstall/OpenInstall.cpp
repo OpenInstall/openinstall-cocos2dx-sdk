@@ -4,6 +4,7 @@
 
 
 #include "OpenInstall.h"
+#include "AdConfig.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 
@@ -17,9 +18,15 @@
 
 using namespace openInstall2dx;
 
-void OpenInstall::config(bool adEnabled, char *oaid, char *gaid){
+void OpenInstall::config(bool adEnabled, char *oaid, char *gaid) {
+    // 兼容旧版本 2021.09.06
+    AdConfig adConfig = AdConfig(adEnabled, oaid, gaid, false, false);
+    config(adConfig);
+}
+
+void OpenInstall::config(AdConfig adConfig) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    AndroidOpenInstall::config(adEnabled, oaid, gaid);
+    AndroidOpenInstall::config(adConfig);
 #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     // just support on android
 #endif
@@ -61,7 +68,7 @@ void OpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData))
 #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 
     CPOpenInstall::registerWakeUpHandlerToNative(wakeupCallback);
-    
+
 #endif
 }
 

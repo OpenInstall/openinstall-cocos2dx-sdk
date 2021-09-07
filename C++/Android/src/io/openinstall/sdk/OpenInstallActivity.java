@@ -51,4 +51,9 @@ public class OpenInstallActivity extends Cocos2dxActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         OpenInstallHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+
+
+
+
 }

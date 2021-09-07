@@ -15,6 +15,7 @@
 ```
         ../../../Classes/openinstall/OpenInstall.cpp \
         ../../../Classes/openinstall/AppData.cpp \
+        ../../../Classes/openinstall/AdConfig.cpp \
         ../../../Classes/openinstall/Android/OpenInstallProxy.cpp \
         ../../../Classes/openinstall/Android/AndroidOpenInstall.cpp
 ```
@@ -83,23 +84,28 @@ _如果有其他的逻辑需要加入 `AppActivity` 中，可以采用继承 `Op
 #### 广告平台
 1、针对广告平台接入，新增配置接口，在调用 `init` 之前调用。参考 [广告平台对接Android集成指引](https://www.openinstall.io/doc/ad_android.html)
 ``` cpp
-    /**
-    * adEnabled 为 true 表示 openinstall 需要获取广告追踪相关参数，默认为 false
-    * oaid 为 null 时，表示交由 openinstall 获取 oaid， 默认为 null
-    * gaid 为 null 时，表示交由 openinstall 获取 gaid， 默认为 null
-    */
-    openInstall2dx::OpenInstall::config(true, "通过移动安全联盟获取到的 oaid", "通过 google api 获取到的 advertisingId");
+    openInstall2dx::AdConfig adConfig = openInstall2dx::AdConfig();
+    // SDK 需要获取广告追踪相关参数
+    adConfig.setAdEnabled(true);
+    // SDK 使用传入的oaid，不再获取oaid
+    adConfig.setOaid("通过移动安全联盟获取到的 oaid");
+    // SDK 使用传入的gaid，不再获取gaid
+    adConfig.setGaid("通过 google api 获取到的 advertisingId");
+    // SDK 不需要获取 imei
+    adConfig.setImeiDisabled(true);
+    // SDK 不需要获取 mac地址
+    adConfig.setMacDisabled(true);
+    openInstall2dx::OpenInstall::config(adConfig);
 ```
-例如： 开发者自己获取到了 oaid，但是需要 openinstall 获取 gaid，则调用代码为
+例如： 开发者自己获取到了 oaid，但是需要 openinstall 获取 gaid，同时不允许SDK获取imei，但同意SDK获取mac地址，则调用代码为
 ``` cpp
-    // f32a09dc-3312-d43e-6583-62fac13f33ae 是通过移动安全联盟获取到的 oaid
-    openInstall2dx::OpenInstall::config(true, "f32a09dc-3312-d43e-6583-62fac13f33ae", nullptr);
+    AdConfig adConfig = AdConfig(true, "通过移动安全联盟获取到的 oaid", nullptr, true, false);
+    OpenInstall::config(adConfig);
 ```
 
 2、为了精准地匹配到渠道，需要获取设备唯一标识码（IMEI），因此需要做额外的权限申请  
-在 `AndroidManifest.xml` 中添加权限声明 `<uses-permission android:name="android.permission.READ_PHONE_STATE"/>` 
-
-3、允许插件申请权限并初始化
+（1）在 `AndroidManifest.xml` 中添加权限声明 `<uses-permission android:name="android.permission.READ_PHONE_STATE"/>`   
+（2）利用内部Api申请权限并初始化
 ``` cpp
     /**
     * 调用初始化，允许 openinstall 请求权限
@@ -107,3 +113,4 @@ _如果有其他的逻辑需要加入 `AppActivity` 中，可以采用继承 `Op
     */
     openInstall2dx::OpenInstall::init(true);
 ```
+或者自行处理权限请求，确保初始化在权限请求之后调用。**无论终端用户是否同意，都要调用初始化**

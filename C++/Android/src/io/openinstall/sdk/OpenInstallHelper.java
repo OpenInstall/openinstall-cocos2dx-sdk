@@ -25,6 +25,7 @@ public class OpenInstallHelper {
     private static Intent wakeUpIntent = null;
 
     private static Configuration configuration = null;
+
     private static final Handler UIHandler = new Handler(Looper.getMainLooper());
 
     // 防止初始化在 GLThread 调用，导致代码运行顺序不一致
@@ -38,7 +39,8 @@ public class OpenInstallHelper {
 
     private static final List<Runnable> delayTaskList = new ArrayList<>();
 
-    public static void config(final boolean adEnabled, final String oaid, final String gaid) {
+    public static void config(final boolean adEnabled, final String oaid, final String gaid,
+                              final boolean imeiDisabled, final boolean macDisabled) {
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
@@ -46,9 +48,19 @@ public class OpenInstallHelper {
                 builder.adEnabled(adEnabled);
                 builder.oaid(oaid);
                 builder.gaid(gaid);
-                Log.d(TAG, String.format("Configuration : adEnabled = %b, oaid = %s, gaid = %s", adEnabled,
-                        oaid == null ? "NULL" : oaid, gaid == null ? "NULL" : gaid));
+                if (imeiDisabled) {
+                    builder.imeiDisabled();
+                }
+                if (macDisabled) {
+                    builder.macDisabled();
+                }
                 configuration = builder.build();
+
+                Log.d(TAG, String.format("Configuration : adEnabled = %b, oaid = %s, gaid = %s, " +
+                                "imeiDisabled = %s, macDisabled = %s",
+                        configuration.isAdEnabled(),
+                        configuration.getOaid(), configuration.getGaid(),
+                        configuration.isImeiDisabled(), configuration.isMacDisabled()));
             }
         });
     }

@@ -14,18 +14,20 @@
 
 using namespace cocos2d;
 
-void AndroidOpenInstall::config(bool adEnabled, char *oaid, char *gaid) {
+void AndroidOpenInstall::config(AdConfig adConfig) {
     JniMethodInfo methodInfo_config;
     if (!JniHelper::getStaticMethodInfo(methodInfo_config, "io/openinstall/sdk/OpenInstallHelper",
-                                        "config", "(ZLjava/lang/String;Ljava/lang/String;)V")) {
+                                        "config", "(ZLjava/lang/String;Ljava/lang/String;ZZ)V")) {
         LOGD("get OpenInstallHelper.config JniMethodInfo failed");
         return;
     }
-    jstring jOaid = methodInfo_config.env->NewStringUTF(oaid);
-    jstring jGaid = methodInfo_config.env->NewStringUTF(gaid);
+    jstring jOaid = methodInfo_config.env->NewStringUTF(adConfig.getOaid());
+    jstring jGaid = methodInfo_config.env->NewStringUTF(adConfig.getGaid());
     methodInfo_config.env->CallStaticVoidMethod(methodInfo_config.classID,
                                                 methodInfo_config.methodID,
-                                                adEnabled, jOaid, jGaid);
+                                                adConfig.isAdEnabled(), jOaid, jGaid,
+                                                adConfig.isImeiDisabled(),
+                                                adConfig.isMacDisabled());
 
     LOGD("call config success");
 }

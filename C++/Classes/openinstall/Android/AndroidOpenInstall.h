@@ -6,6 +6,7 @@
 #define ANDROID_ANDROIDOPENINSTALL_H
 
 #include "../AppData.h"
+#include "../AdConfig.h"
 
 using namespace openInstall2dx;
 
@@ -13,7 +14,7 @@ class AndroidOpenInstall {
 
 public:
 
-    static void config(bool adEnabled, char *oaid, char *gaid);
+    static void config(AdConfig adConfig);
 
     static void init(bool permission);
 
