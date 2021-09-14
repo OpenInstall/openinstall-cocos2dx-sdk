@@ -2,7 +2,10 @@
 
 cocos2d-x 集成 openinstall SDK
 
-**注意：请使用最新的 `Release` 版本集成**
+**注意：请使用最新的稳定版本集成**  
+从 [Releases](https://github.com/OpenInstall/openinstall-cocos2dx-sdk/releases) 中选择最新发布的版本，按图标识获取稳定版本代码和文档
+
+![最新稳定版](https://res.cdn.openinstall.io/doc/github-latest-release.jpg)
 
 ## Android 集成
 集成 openinstall SDK 到 cocos2d-x Android 项目中，请参考 [Android 集成指南](README/Android.md)
@@ -31,17 +34,18 @@ void AppDelegate::initGLContextAttrs()
 
 }
 ```
-
+> **注意：** 请在调用初始化后，再调用 openinstall 其它 api。
 ### 2 快速安装与一键跳转
 
-在应用启动时，注册拉起回调。当 App 被唤醒时，可以及时在回调中获取跳转携带的数据
+在应用启动时，注册拉起回调。当 App 被唤醒时，可以及时在回调中获取跳转携带的数据  
+可在 `AppDelegate` 的 `initGLContextAttrs` 的方法中，在初始化后调用。
 ``` cpp
     openInstall2dx::OpenInstall::registerWakeUpHandler([](openInstall2dx::AppData appData){
         std::string channelCode = appData.getChannelCode();
         std::string bindData = appData.getBindData();
     });
 ```
-> **注意：** 请在调用`OpenInstall::init();` 之后注册唤醒监听。
+
 ### 3 携带参数安装（高级版功能）
 
 在应用需要安装参数时，调用以下 api 获取由 SDK 保存的安装参数，可设置超时时长，单位秒
