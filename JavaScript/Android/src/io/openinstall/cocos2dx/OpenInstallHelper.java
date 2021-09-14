@@ -1,6 +1,8 @@
 package io.openinstall.cocos2dx;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.fm.openinstall.Configuration;
@@ -10,6 +12,7 @@ import com.fm.openinstall.listener.AppWakeUpAdapter;
 import com.fm.openinstall.model.AppData;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
+import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 import org.cocos2dx.lib.Cocos2dxJavascriptJavaBridge;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +24,6 @@ public class OpenInstallHelper {
 
     private static final String TAG = "OpenInstallHelper";
     private static boolean registerWakeup = false;
-    private static volatile boolean callInit = false;
     private static volatile boolean initialized = false;
     private static String wakeupDataHolder = null;
     private static Intent wakeupIntent = null;
@@ -30,23 +32,51 @@ public class OpenInstallHelper {
     private static String REQUIRE_OPENINSTALL = "var openinstall = require(\"OpenInstall\");";
     //高版本Cocos Creator构建的项目请使用此语句
     //private static String REQUIRE_OPENINSTALL = "var openinstall = window.__require(\"OpenInstall\");";
-    private static String CALLBACK_PATTERN = "openinstall.%s(%s);";
-    private static String CALLBACK_INSTALL = "_installCallback";
-    private static String CALLBACK_WAKEUP = "_wakeupCallback";
+    private final static String CALLBACK_PATTERN = "openinstall.%s(%s);";
+    private final static String CALLBACK_INSTALL = "_installCallback";
+    private final static String CALLBACK_WAKEUP = "_wakeupCallback";
 
-    public static void config(boolean adEnabled, String oaid, String gaid) {
-        Configuration.Builder builder = new Configuration.Builder();
-        builder.adEnabled(adEnabled);
-        oaid = setNull(oaid);
-        builder.oaid(oaid);
-        gaid = setNull(gaid);
-        builder.gaid(gaid);
-        Log.d("OpenInstall", String.format("adEnabled = %s, oaid = %s, gaid = %s",
-                adEnabled, oaid == null ? "NULL" : oaid, gaid == null ? "NULL" : gaid));
-        configuration = builder.build();
+    private static final Handler UIHandler = new Handler(Looper.getMainLooper());
+
+    // 防止初始化在 GLThread 调用，导致代码运行顺序不一致
+    private static void runOnUIThread(Runnable action) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            action.run();
+        } else {
+            UIHandler.post(action);
+        }
     }
 
-    private static String setNull(String res) {
+    private static void runOnGLThread(Runnable action) {
+        Cocos2dxGLSurfaceView.getInstance().queueEvent(action);
+    }
+
+    public static void config(final boolean adEnabled, final String oaid, final String gaid,
+                              final boolean macDisabled, final boolean imeiDisabled) {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                Configuration.Builder builder = new Configuration.Builder();
+                builder.adEnabled(adEnabled);
+                builder.oaid(checkNull(oaid));
+                builder.gaid(checkNull(gaid));
+                if (macDisabled) {
+                    builder.macDisabled();
+                }
+                if (imeiDisabled) {
+                    builder.imeiDisabled();
+                }
+                configuration = builder.build();
+                Log.d(TAG, String.format("adEnabled = %s, oaid = %s, gaid = %s, " +
+                                "macDisabled = %s, imeiDisabled = %s",
+                        configuration.isAdEnabled(), configuration.getOaid(), configuration.getGaid(),
+                        configuration.isMacDisabled(), configuration.isImeiDisabled()));
+            }
+        });
+
+    }
+
+    private static String checkNull(String res) {
         // 传入 null 或者 未定义，设置为 null
         if (res == null || res.equalsIgnoreCase("null")
                 || res.equalsIgnoreCase("undefined")) {
@@ -55,34 +85,17 @@ public class OpenInstallHelper {
         return res;
     }
 
-    /**
-     * 插件调用openinstall初始化
-     *
-     * @param permission
-     * @param activity
-     */
-    public static void init(boolean permission, final Cocos2dxActivity activity) {
-        callInit = true;
-        if (permission) {
-            // openinstall 请求 READ_PHONE_STATE 权限，获取 IMEI
-            OpenInstall.initWithPermission(activity, configuration, new Runnable() {
-                @Override
-                public void run() {
-                    initialized(activity);
-                }
-            });
-        } else {
-            OpenInstall.init(activity, configuration);
-            initialized(activity);
-        }
+    public static void init() {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstall.init(Cocos2dxActivity.getContext(), configuration);
+                initialized();
+            }
+        });
     }
 
-    /**
-     * OpenInstall 已经调用了初始化
-     *
-     * @param activity
-     */
-    private static void initialized(final Cocos2dxActivity activity) {
+    private static void initialized() {
         initialized = true;
         if (wakeupIntent != null) {
             OpenInstall.getWakeUp(wakeupIntent, new AppWakeUpAdapter() {
@@ -96,7 +109,7 @@ public class OpenInstallHelper {
                         wakeupDataHolder = json;
                         return;
                     }
-                    activity.runOnGLThread(new Runnable() {
+                    runOnGLThread(new Runnable() {
                         @Override
                         public void run() {
                             callback(CALLBACK_WAKEUP, json);
@@ -108,35 +121,72 @@ public class OpenInstallHelper {
         }
     }
 
-    /**
-     * 获取安装参数，不考虑未初始化的情况
-     *
-     * @param s
-     * @param cocos2dxActivity
-     */
-    public static void getInstall(int s, final Cocos2dxActivity cocos2dxActivity) {
-        OpenInstall.getInstall(new AppInstallAdapter() {
+    public static void getInstall(final int s) {
+        runOnUIThread(new Runnable() {
             @Override
-            public void onInstall(AppData appData) {
-                final String json = toJson(appData);
-                Log.d(TAG, "installData = " + json);
-                cocos2dxActivity.runOnGLThread(new Runnable() {
+            public void run() {
+                OpenInstall.getInstall(new AppInstallAdapter() {
                     @Override
-                    public void run() {
-                        callback(CALLBACK_INSTALL, json);
+                    public void onInstall(AppData appData) {
+                        final String json = toJson(appData);
+                        Log.d(TAG, "installData = " + json);
+                        runOnGLThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback(CALLBACK_INSTALL, json);
+                            }
+                        });
                     }
-                });
+                }, s);
             }
-        }, s);
+        });
+    }
+
+    public static void registerWakeup() {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                registerWakeup = true;
+                if (wakeupDataHolder != null) {
+                    Log.d(TAG, "wakeupDataHolder = " + wakeupDataHolder);
+                    runOnGLThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback(CALLBACK_WAKEUP, wakeupDataHolder);
+                            wakeupDataHolder = null;
+                        }
+                    });
+
+                }
+            }
+        });
+    }
+
+    public static void reportRegister() {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstall.reportRegister();
+            }
+        });
+    }
+
+    public static void reportEffectPoint(final String pointId, final long pointValue) {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstall.reportEffectPoint(pointId, pointValue);
+            }
+        });
     }
 
     /**
-     * 应用被拉起时，将调用此方法获取拉起参数，当 openinstall 为初始化时，将保存 intent，待初始化后再使用
+     * 应用被拉起时，将调用此方法获取拉起参数
+     * 当 openinstall 未初始化时，将保存 intent，待初始化后再使用
      *
      * @param intent
-     * @param cocos2dxActivity
      */
-    public static void getWakeup(Intent intent, final Cocos2dxActivity cocos2dxActivity) {
+    public static void getWakeup(Intent intent) {
         if (initialized) {
             OpenInstall.getWakeUp(intent, new AppWakeUpAdapter() {
                 @Override
@@ -148,7 +198,7 @@ public class OpenInstallHelper {
                         wakeupDataHolder = json;
                         return;
                     }
-                    cocos2dxActivity.runOnGLThread(new Runnable() {
+                    runOnGLThread(new Runnable() {
                         @Override
                         public void run() {
                             callback(CALLBACK_WAKEUP, json);
@@ -161,29 +211,6 @@ public class OpenInstallHelper {
         }
     }
 
-    /**
-     * js 调用此方法，注册拉起回调
-     *
-     * @param cocos2dxActivity
-     */
-    public static void registerWakeupCallback(final Cocos2dxActivity cocos2dxActivity) {
-        if (!callInit) {
-            Log.d(TAG, "未调用 init，插件使用默认配置初始化");
-            init(false, cocos2dxActivity);
-        }
-        registerWakeup = true;
-        if (wakeupDataHolder != null) {
-            Log.d(TAG, "wakeupDataHolder = " + wakeupDataHolder);
-            cocos2dxActivity.runOnGLThread(new Runnable() {
-                @Override
-                public void run() {
-                    callback(CALLBACK_WAKEUP, wakeupDataHolder);
-                    wakeupDataHolder = null;
-                }
-            });
-
-        }
-    }
 
     private static String toJson(AppData appData) {
         JSONObject jsonObject = new JSONObject();

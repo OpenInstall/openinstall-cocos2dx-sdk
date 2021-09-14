@@ -8,27 +8,29 @@ var openinstall = {
 
     },
 
-	config: function(adEnabled, oaid, gaid){
+	configAndroid: function(options){
 		if (cc.sys.OS_ANDROID == cc.sys.os) {
-			cc.log("adEnabled = " + adEnabled + ", oaid = " + oaid +", gaid = " + gaid);
-			if(null == oaid){
-				oaid = "null";
+			// adEnabled, oaid, gaid, macDisabled, imeiDisabled
+			cc.log("adEnabled = " + options.adEnabled + ", oaid = " + options.oaid +", gaid = " + options.gaid 
+				+ ", macDisabled = " + options.macDisabled + ", imeiDisabled = " + options.imeiDisabled);
+			if(!options.oaid){
+				options.oaid = "undefined";
 			}
-			if(null == gaid){
-				gaid = "null";
+			if(!options.gaid){
+				options.gaid = "undefined";
 			}
-			jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
-                "config", "(ZLjava/lang/String;Ljava/lang/String;)V", adEnabled, oaid, gaid);   
+			jsb.reflection.callStaticMethod("io/openinstall/cocos2dx/OpenInstallHelper",
+                "config", "(ZLjava/lang/String;Ljava/lang/String;ZZ)V", 
+				options.adEnabled, options.oaid, options.gaid, options.macDisabled, options.imeiDisabled);   
         } else if(cc.sys.OS_IOS == cc.sys.os){
             //cc.log("此方法仅适用于Android平台");
         }
 	},
 
-	init: function(permission){
+	init: function(){
 		if (cc.sys.OS_ANDROID == cc.sys.os) {
-			cc.log("permission = " + permission);
-			jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
-                "init", "(Z)V", permission);   
+			jsb.reflection.callStaticMethod("io/openinstall/cocos2dx/OpenInstallHelper",
+                "init", "()V");   
         } else if(cc.sys.OS_IOS == cc.sys.os){
             //cc.log("此方法仅适用于Android平台");
         }
@@ -37,7 +39,7 @@ var openinstall = {
     getInstall: function (s, callback) {
         this.installCallback = callback;
         if (cc.sys.OS_ANDROID == cc.sys.os) {
-            jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
+            jsb.reflection.callStaticMethod("io/openinstall/cocos2dx/OpenInstallHelper",
                 "getInstall", "(I)V", s);
         } else if(cc.sys.OS_IOS == cc.sys.os){
             jsb.reflection.callStaticMethod("IOSOpenInstallBridge","getInstall:",s);
@@ -46,7 +48,7 @@ var openinstall = {
     registerWakeUpHandler: function (callback) {
         this.wakeupCallback = callback;
         if (cc.sys.OS_ANDROID == cc.sys.os) {
-            jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
+            jsb.reflection.callStaticMethod("io/openinstall/cocos2dx/OpenInstallHelper",
                 "registerWakeup", "()V");
         } else if(cc.sys.OS_IOS == cc.sys.os){
             jsb.reflection.callStaticMethod("IOSOpenInstallBridge","registerWakeUpHandler");
@@ -55,7 +57,7 @@ var openinstall = {
 
     reportRegister: function () {
         if (cc.sys.OS_ANDROID == cc.sys.os) {
-            jsb.reflection.callStaticMethod("com/fm/openinstall/OpenInstall",
+            jsb.reflection.callStaticMethod("io/openinstall/cocos2dx/OpenInstallHelper",
                 "reportRegister", "()V");
         } else if(cc.sys.OS_IOS == cc.sys.os){
             jsb.reflection.callStaticMethod("IOSOpenInstallBridge","reportRegister");
@@ -64,7 +66,7 @@ var openinstall = {
 
     reportEffectPoint: function (pointId, pointValue) {
         if (cc.sys.OS_ANDROID == cc.sys.os) {
-            jsb.reflection.callStaticMethod("com/fm/openinstall/OpenInstall",
+            jsb.reflection.callStaticMethod("io/openinstall/cocos2dx/OpenInstallHelper",
                 "reportEffectPoint", "(Ljava/lang/String;J)V", pointId, pointValue);
         } else if(cc.sys.OS_IOS == cc.sys.os){
             jsb.reflection.callStaticMethod("IOSOpenInstallBridge","reportEffectPoint:Value:",pointId,pointValue);

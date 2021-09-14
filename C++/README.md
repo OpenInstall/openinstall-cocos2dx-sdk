@@ -5,7 +5,7 @@ cocos2d-x 集成 openinstall SDK
 **注意：请使用最新的稳定版本集成**  
 从 [Releases](https://github.com/OpenInstall/openinstall-cocos2dx-sdk/releases) 中选择最新发布的版本，按图标识获取稳定版本代码和文档
 
-![最新稳定版](https://res.cdn.openinstall.io/doc/github-latest-release.jpg)
+![最新稳定版](https://res.cdn.openinstall.io/doc/latest-release.png)
 
 ## Android 集成
 集成 openinstall SDK 到 cocos2d-x Android 项目中，请参考 [Android 集成指南](README/Android.md)

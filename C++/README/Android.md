@@ -86,7 +86,7 @@
 ```
 > 如果有其他的逻辑需要加入 `AppActivity` 中，可以采用继承 `OpenInstallActivity` 来实现
 
-#### 广告平台
+#### 广告平台接入
 1、针对广告平台接入，新增配置接口，在调用 `init` 之前调用。参考 [广告平台对接Android集成指引](https://www.openinstall.io/doc/ad_android.html)
 ``` cpp
     openInstall2dx::AndroidConfig adConfig = openInstall2dx::AndroidConfig();
