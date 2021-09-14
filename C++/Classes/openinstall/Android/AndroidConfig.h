@@ -7,7 +7,7 @@
 
 namespace openInstall2dx {
 
-    class AdConfig {
+    class AndroidConfig {
 
     private:
         bool _adEnabled;
@@ -18,9 +18,9 @@ namespace openInstall2dx {
 
     public:
 
-        AdConfig() {};
+        AndroidConfig() {};
 
-        AdConfig(bool adEnabled, char *oaid, char *gaid, bool imeiDisabled, bool macDisabled) {
+        AndroidConfig(bool adEnabled, char *oaid, char *gaid, bool imeiDisabled, bool macDisabled) {
             _adEnabled = adEnabled;
             _oaid = oaid;
             _gaid = gaid;

@@ -9,16 +9,17 @@
 #include "OpenInstallProxy.h"
 #include <android/log.h>
 
-#define  LOG_TAG    "OpenInstall"
+#define  LOG_TAG    "OpenInstallCpp"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 using namespace cocos2d;
 
-void AndroidOpenInstall::config(AdConfig adConfig) {
+void AndroidOpenInstall::config(AndroidConfig adConfig) {
     JniMethodInfo methodInfo_config;
     if (!JniHelper::getStaticMethodInfo(methodInfo_config, "io/openinstall/sdk/OpenInstallHelper",
                                         "config", "(ZLjava/lang/String;Ljava/lang/String;ZZ)V")) {
-        LOGD("get OpenInstallHelper.config JniMethodInfo failed");
+        LOGE("get OpenInstallHelper.config JniMethodInfo failed");
         return;
     }
     jstring jOaid = methodInfo_config.env->NewStringUTF(adConfig.getOaid());
@@ -32,11 +33,11 @@ void AndroidOpenInstall::config(AdConfig adConfig) {
     LOGD("call config success");
 }
 
-void AndroidOpenInstall::init(bool permission) {
+void AndroidOpenInstall::init() {
     JniMethodInfo methodInfo_init;
     if (!JniHelper::getStaticMethodInfo(methodInfo_init, "io/openinstall/sdk/OpenInstallHelper",
-                                        "init", "(Landroid/app/Activity;Z)V")) {
-        LOGD("get OpenInstallHelper.init JniMethodInfo failed");
+                                        "init", "(Landroid/content/Context;)V")) {
+        LOGE("get OpenInstallHelper.init JniMethodInfo failed");
         return;
     }
 
@@ -44,7 +45,7 @@ void AndroidOpenInstall::init(bool permission) {
     if (!JniHelper::getStaticMethodInfo(methodInfo_getContext,
                                         "org/cocos2dx/lib/Cocos2dxActivity",
                                         "getContext", "()Landroid/content/Context;")) {
-        LOGD("get Cocos2dxActivity.getContext JniMethodInfo failed");
+        LOGE("get Cocos2dxActivity.getContext JniMethodInfo failed");
         return;
     }
 
@@ -53,7 +54,7 @@ void AndroidOpenInstall::init(bool permission) {
             methodInfo_getContext.methodID);
 
     methodInfo_init.env->CallStaticVoidMethod(methodInfo_init.classID, methodInfo_init.methodID,
-                                              jContext, permission);
+                                              jContext);
 
     methodInfo_getContext.env->DeleteLocalRef(jContext);
 
@@ -69,7 +70,7 @@ void AndroidOpenInstall::getInstall(float s, void (*installCallback)(AppData app
                                         "io/openinstall/sdk/OpenInstallHelper",
                                         "getInstall",
                                         "(I)V")) {
-        LOGD("get OpenInstallHelper.getInstall JniMethodInfo failed");
+        LOGE("get OpenInstallHelper.getInstall JniMethodInfo failed");
         return;
     }
     int timeout = static_cast<int>(s);
@@ -80,37 +81,49 @@ void AndroidOpenInstall::getInstall(float s, void (*installCallback)(AppData app
                                                     methodInfo_getInstall.methodID,
                                                     timeout);
 
-    LOGD("call OpenInstallHelper.getInstall success");
+    LOGD("call getInstall success");
 }
 
 void AndroidOpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData)) {
     setAppWakeUpCallbackMethod(wakeupCallback);
 
-    LOGD("OpenInstall.registerWakeUpHandler success");
+    LOGD("registerWakeUpHandler success");
 }
 
 void AndroidOpenInstall::reportRegister() {
     JniMethodInfo methodInfo_reportRegister;
     if (!JniHelper::getStaticMethodInfo(methodInfo_reportRegister,
-                                        "com/fm/openinstall/OpenInstall",
+                                        "io/openinstall/sdk/OpenInstallHelper",
                                         "reportRegister", "()V")) {
-        LOGD("get OpenInstall.reportRegister JniMethodInfo failed");
-        return;
+        LOGD("get OpenInstallHelper.reportRegister JniMethodInfo failed");
+        LOGD("Java 方法调用失败，请获取最新代码并替换文件");
+        if (!JniHelper::getStaticMethodInfo(methodInfo_reportRegister,
+                                            "com/fm/openinstall/OpenInstall",
+                                            "reportRegister", "()V")) {
+            LOGE("get OpenInstall.reportRegister JniMethodInfo failed");
+            return;
+        }
     }
 
     methodInfo_reportRegister.env->CallStaticVoidMethod(methodInfo_reportRegister.classID,
                                                         methodInfo_reportRegister.methodID);
 
-    LOGD("call OpenInstall.reportRegister success");
+    LOGD("call reportRegister success");
 }
 
 void AndroidOpenInstall::reportEffectPoint(const char *pId, long pValue) {
     JniMethodInfo methodInfo_reportEffectPoint;
     if (!JniHelper::getStaticMethodInfo(methodInfo_reportEffectPoint,
-                                        "com/fm/openinstall/OpenInstall",
+                                        "io/openinstall/sdk/OpenInstallHelper",
                                         "reportEffectPoint", "(Ljava/lang/String;J)V")) {
         LOGD("get OpenInstall.reportEffectPoint JniMethodInfo failed");
-        return;
+        LOGD("Java 方法调用失败，请获取最新代码并替换文件");
+        if (!JniHelper::getStaticMethodInfo(methodInfo_reportEffectPoint,
+                                            "com/fm/openinstall/OpenInstall",
+                                            "reportEffectPoint", "(Ljava/lang/String;J)V")) {
+            LOGE("get OpenInstall.reportEffectPoint JniMethodInfo failed");
+            return;
+        }
     }
 
     jstring pointId = methodInfo_reportEffectPoint.env->NewStringUTF(pId);
@@ -120,5 +133,5 @@ void AndroidOpenInstall::reportEffectPoint(const char *pId, long pValue) {
                                                            pointId,
                                                            pointValue);
 
-    LOGD("call OpenInstall.reportEffectPoint success");
+    LOGD("call reportEffectPoint success");
 }

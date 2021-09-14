@@ -1,6 +1,7 @@
 package io.openinstall.sdk;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,9 +9,6 @@ import android.util.Log;
 
 import com.fm.openinstall.Configuration;
 import com.fm.openinstall.OpenInstall;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Wenki on 2020/7/3.
@@ -21,7 +19,6 @@ public class OpenInstallHelper {
     private final static AppWakeUpCallback wakeUpCallback = new AppWakeUpCallback();
     private final static AppInstallCallback installCallback = new AppInstallCallback();
     private static volatile boolean initialized = false;
-    private static volatile boolean callInit = false;
     private static Intent wakeUpIntent = null;
 
     private static Configuration configuration = null;
@@ -36,8 +33,6 @@ public class OpenInstallHelper {
             UIHandler.post(action);
         }
     }
-
-    private static final List<Runnable> delayTaskList = new ArrayList<>();
 
     public static void config(final boolean adEnabled, final String oaid, final String gaid,
                               final boolean imeiDisabled, final boolean macDisabled) {
@@ -65,37 +60,23 @@ public class OpenInstallHelper {
         });
     }
 
-    public static void init(final Activity activity, final boolean permission) {
-        Log.d(TAG, "permission = " + permission);
+    public static void init(final Context context) {
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                callInit = true;
-                if (permission) {
-                    OpenInstall.initWithPermission(activity, configuration, new Runnable() {
-                        @Override
-                        public void run() {
-                            initialized = true;
-                            if (wakeUpIntent != null) {
-                                Intent intent = wakeUpIntent;
-                                wakeUpIntent = null;
-                                OpenInstall.getWakeUp(intent, wakeUpCallback);
-                            }
-                            for (Runnable task : delayTaskList) {
-                                task.run();
-                            }
-                        }
-                    });
-                } else {
-                    OpenInstall.init(activity, configuration);
-                    initialized = true;
+                OpenInstall.init(context, configuration);
+                initialized = true;
+                if (wakeUpIntent != null) {
+                    Intent intent = wakeUpIntent;
+                    wakeUpIntent = null;
+                    OpenInstall.getWakeUp(intent, wakeUpCallback);
                 }
             }
         });
     }
 
-    static void wakeup(final Intent intent) {
-        Runnable action = new Runnable() {
+    public static void wakeup(final Intent intent) {
+        runOnUIThread(new Runnable() {
             @Override
             public void run() {
                 if (initialized) {
@@ -104,39 +85,34 @@ public class OpenInstallHelper {
                     wakeUpIntent = intent;
                 }
             }
-        };
-
-        delayTask(action);
+        });
     }
 
-    static void getInstall(final int second) {
-        Runnable action = new Runnable() {
+    public static void getInstall(final int second) {
+        runOnUIThread(new Runnable() {
             @Override
             public void run() {
                 OpenInstall.getInstall(installCallback, second);
             }
-        };
-
-        delayTask(action);
+        });
     }
 
-    private static void delayTask(final Runnable task) {
+    public static void reportRegister() {
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
-//                Log.d(TAG, "callInit = " + callInit + ", initialized = " + initialized);
-                // 如果调用了初始化，但是还没有初始化完成，先将任务存下延后调用
-                if (callInit && !initialized) {
-                    delayTaskList.add(task);
-                } else {
-                    task.run();
-                }
+                OpenInstall.reportRegister();
             }
         });
     }
 
-    static void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        OpenInstall.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public static void reportEffectPoint(final String pointId, final long pointValue) {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstall.reportEffectPoint(pointId, pointValue);
+            }
+        });
     }
 
 }

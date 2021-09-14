@@ -46,14 +46,4 @@ public class OpenInstallActivity extends Cocos2dxActivity {
         OpenInstallHelper.wakeup(intent);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        OpenInstallHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-
-
-
-
 }

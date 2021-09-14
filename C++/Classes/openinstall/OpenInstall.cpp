@@ -4,7 +4,7 @@
 
 
 #include "OpenInstall.h"
-#include "AdConfig.h"
+#include "openinstall/Android/AndroidConfig.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 
@@ -18,13 +18,7 @@
 
 using namespace openInstall2dx;
 
-void OpenInstall::config(bool adEnabled, char *oaid, char *gaid) {
-    // 兼容旧版本 2021.09.06
-    AdConfig adConfig = AdConfig(adEnabled, oaid, gaid, false, false);
-    config(adConfig);
-}
-
-void OpenInstall::config(AdConfig adConfig) {
+void OpenInstall::configAndroid(AndroidConfig adConfig) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     AndroidOpenInstall::config(adConfig);
 #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
@@ -33,14 +27,10 @@ void OpenInstall::config(AdConfig adConfig) {
 }
 
 void OpenInstall::init() {
-    init(false);
-}
-
-void OpenInstall::init(bool permission) {
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 
-    AndroidOpenInstall::init(permission);
+    AndroidOpenInstall::init();
 
 #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 

@@ -6,7 +6,7 @@
 #define OPENINSTALL_H
 
 #include "AppData.h"
-#include "AdConfig.h"
+#include "openinstall/Android/AndroidConfig.h"
 #include "cocos2d.h"
 
 namespace openInstall2dx {
@@ -15,14 +15,10 @@ namespace openInstall2dx {
         
     public:
 
-        static void config(bool adEnabled, char *oaid, char *gaid);
-
-        static void config(AdConfig adConfig);
+        static void configAndroid(AndroidConfig adConfig);
 
         static void init();
 
-        static void init(bool permission);
-        
         static void getInstall(float timeout,void (*installCallback)(AppData appData));
         
         static void registerWakeUpHandler(void (*wakeupCallback)(AppData appData));
