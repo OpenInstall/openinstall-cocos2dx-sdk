@@ -10,12 +10,12 @@
 - 将 `Android` 目录下的 `src` 文件夹下的内容拷贝到项目的 `app/src` 目录下
 - 将 `Android` 目录下的 `libs` 文件下的jar文件拷贝到项目的 `app/libs` 目录下
 
-> 注意：请开发者在进行升级时，重新拷贝并覆盖旧的文件，删除低版本SDK 
+> 注意：请开发者在进行升级时，重新拷贝并覆盖旧的文件，删除低版本SDK  
 
 使用新版cocos creator的用户，如果无法回调，则需要修改 `Android/src/io/openinstall/cocos2dx/OpenInstallHelper.java`中的引用语句  
 ![高版本require](res/android_require.jpg)
 
-## 配置 openinstall
+## 配置项目
 
 ### 添加应用权限
 
@@ -27,7 +27,7 @@
 ```
 
 ### 配置 AppKey 和 scheme
-前往 [openinstall控制台] (https://developer.openinstall.io/) ，进入应用，选择 “Android集成”，切换到“Android应用配置”，获取应用的 AppKey 和 scheme。  
+前往 [openinstall控制台](https://developer.openinstall.io/) ，进入应用，选择 “Android集成”，切换到“Android应用配置”，获取应用的 AppKey 和 scheme。  
 ![获取appkey和scheme](https://res.cdn.openinstall.io/doc/android-info.jpg)
 
 #### AppKey 配置

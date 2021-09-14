@@ -35,72 +35,19 @@ import org.cocos2dx.lib.Cocos2dxActivity;
 
 public class OpenInstallActivity extends Cocos2dxActivity {
 
-    private static Cocos2dxActivity cocos2dxActivity = null;
-    // 确保 init 在 UI 线程调用
-    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cocos2dxActivity = this;
-        OpenInstallHelper.getWakeup(getIntent(), cocos2dxActivity);
+
+        OpenInstallHelper.getWakeup(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        OpenInstallHelper.getWakeup(intent, cocos2dxActivity);
+
+        OpenInstallHelper.getWakeup(intent);
     }
 
-    public static void config(final boolean adEnabled, final String oaid, final String gaid){
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                OpenInstallHelper.config(adEnabled, oaid, gaid);
-            }
-        });
-    }
-
-    public static void init(final boolean permission){
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                OpenInstallHelper.init(permission, cocos2dxActivity);
-            }
-        });
-
-    }
-
-    public static void getInstall(final int s, final int luaFunc) {
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                OpenInstallHelper.getInstall(s, luaFunc, cocos2dxActivity);
-            }
-        });
-    }
-
-    public static void registerWakeupCallback(final int luaFunc){
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                OpenInstallHelper.registerWakeupCallback(luaFunc, cocos2dxActivity);
-            }
-        });
-    }
-
-    /**
-     * lua 直接调用 OpenInstall，value 值对应的 long 不好设置
-     * @param pointId
-     * @param pointValue
-     */
-    public static void reportEffectPoint(String pointId, int pointValue){
-        OpenInstall.reportEffectPoint(pointId, pointValue);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        OpenInstall.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 }
