@@ -7,7 +7,6 @@
 
 #include "AppData.h"
 #include "openinstall/Android/AndroidConfig.h"
-#include "openinstall/iOS/iOSConfig.h"
 #include "cocos2d.h"
 
 namespace openInstall2dx {
@@ -17,8 +16,6 @@ namespace openInstall2dx {
     public:
 
         static void configAndroid(AndroidConfig adConfig);
-
-        static void configIOS(iOSConfig adConfig);
 
         static void init();
 

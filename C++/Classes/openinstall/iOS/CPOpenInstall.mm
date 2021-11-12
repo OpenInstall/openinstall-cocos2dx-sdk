@@ -15,13 +15,6 @@ using namespace openInstall2dx;
 //static openInstall2dx::CPOpenInstall::restoreCallBack restoreHandler;
 static void(*restoreCallBack)(AppData appData);
 
-void CPOpenInstall::config(iOSConfig adConfig)
-{
-    if (adConfig.isASAEnabled) {
-        
-    }
-}
-
 void CPOpenInstall::initOpeninstall()
 {
     [OpenInstallSDK initWithDelegate:[CPOpenInstallDelegate defaultManager]];
