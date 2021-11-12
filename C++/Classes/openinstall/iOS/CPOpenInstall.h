@@ -9,6 +9,7 @@
 #define CPOPENINSTALL_H
 
 #include "AppData.h"
+#include "iOSConfig.h"
 //#ifdef __OBJC__
 //#import "OpeninstallData.h"
 //#endif
@@ -20,6 +21,8 @@ namespace openInstall2dx {
         
     public:
                 
+        static void config(iOSConfig adConfig);
+                    
         static void initOpeninstall();
         
         static void getInstallFrom(float timeout,void (*installCallback)(AppData appData));

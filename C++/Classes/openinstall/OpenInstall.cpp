@@ -26,6 +26,14 @@ void OpenInstall::configAndroid(AndroidConfig adConfig) {
 #endif
 }
 
+void OpenInstall::configAndroid(AndroidConfig adConfig) {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    // just support on iOS
+#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    CPOpenInstall::config(adConfig);
+#endif
+}
+
 void OpenInstall::init() {
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)

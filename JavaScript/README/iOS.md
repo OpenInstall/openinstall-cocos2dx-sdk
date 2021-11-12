@@ -39,12 +39,18 @@
 
 ## universal links配置（iOS9以后推荐使用）
 
-对于iOS，为确保能正常跳转，AppID必须开启Associated Domains功能，请到[苹果开发者网站](https://developer.apple.com)，选择Certificate, Identifiers & Profiles，选择相应的AppID，开启Associated Domains。注意：当AppID重新编辑过之后，需要更新相应的mobileprovision证书。(图文配置步骤请看[iOS集成指南](https://www.openinstall.io/doc/ios_sdk.html))，如果已经开启过Associated Domains功能，进行下面操作：
+对于iOS，为确保能正常跳转，AppID必须开启Associated Domains功能，请到[苹果开发者网站](https://developer.apple.com)，选择Certificate, Identifiers & Profiles，选择相应的AppID，开启Associated Domains。注意：当AppID重新编辑过之后，需要更新相应的mobileprovision证书。
+
+![开启Associated Domains](https://res.cdn.openinstall.io/doc/ios-ulink-1.png)
+
+如果已经开启过Associated Domains功能，进行下面操作：  
 
 - 在左侧导航器中点击您的项目
-- 选择'Capabilities'标签
-- 打开'Associated Domains'开关
-- 添加openinstall官网后台中应用对应的关联域名（openinstall应用控制台->iOS集成->iOS应用配置->关联域名(Associated Domains)）
+- 选择 `Capabilities` 标签
+- 打开 `Associated Domains` 开关
+- 添加 openinstall 官网后台中应用对应的关联域名（openinstall应用控制台->iOS集成->iOS应用配置->关联域名(Associated Domains)）
+
+![添加associatedDomains](https://res.cdn.openinstall.io/doc/ios-associated-domains.png)
 
 ### universal links相关代码：
 
@@ -59,40 +65,14 @@
     return YES;
 }
 ```
-**以下配置为可选项**  
-openinstall可兼容微信openSDK1.8.6以上版本的通用链接跳转功能，注意微信SDK初始化方法中，传入正确格式的universal link链接：  
-
-``` objc
-//your_wxAppID从微信后台获取，yourAppkey从openinstall后台获取
-[WXApi registerApp:@"your_wxAppID" universalLink:@"https://yourAppkey.openinstall.io/ulink/"];
-```
-
-微信开放平台后台Universal links配置，要和上面代码中的保持一致  
-
-![微信后台配置](res/wexinUL.jpg)  
-
-- 微信SDK更新参考[微信开放平台更新文档](https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Access_Guide/iOS.html)  
 
 ## scheme配置
 
-在 `Info.plist` 文件中，在`CFBundleURLTypes`数组中添加应用对应的`scheme`，或者在工程“TARGETS-Info-URL Types”里快速添加，图文配置请看[iOS集成指南](https://www.openinstall.io/doc/ios_sdk.html)  
 （scheme的值详细获取位置：openinstall应用控制台->iOS集成->iOS应用配置）
 
-``` xml
-	<key>CFBundleURLTypes</key>
-	<array>
-	    <dict>
-		<key>CFBundleTypeRole</key>
-		<string>Editor</string>
-		<key>CFBundleURLName</key>
-		<string>openinstall</string>
-		<key>CFBundleURLSchemes</key>
-		<array>
-		    <string>"从openinstall官网后台获取应用的scheme"</string>
-		</array>
-	    </dict>
-	</array>
-```
+添加应用对应的 scheme，可在工程“TARGETS -> Info -> URL Types” 里快速添加，图文请看
+
+![scheme配置](https://res.cdn.openinstall.io/doc/ios-scheme.png)
 
 ### scheme相关代码：
 
@@ -122,6 +102,24 @@ openinstall可兼容微信openSDK1.8.6以上版本的通用链接跳转功能，
 }
 ```
 
-## 广告平台对接
+## 广告接入补充文档
 
-请参考详细文档 [iOS集成指引](https://www.openinstall.io/doc/ad_ios.html)，在  `AppController.mm` 中修改初始化方法 `[Openinstall init]`，加入广告相关API。
+### 1、广告平台渠道
+
+1）、需要在Info.plist文件中配置权限  
+``` xml
+<key>NSUserTrackingUsageDescription</key>
+<string>为了您可以精准获取到优质推荐内容，需要您允许使用该权限</string>
+```
+
+2）、添加获取idfa的代码
+
+修改或者替换 iOS 目录下的 `OpeninstallCocosJS` 文件夹中的 `Openinstall.mm`文件，参考或者直接替换为iOS 目录下的 `adtrack` 文件夹中的 `Openinstall.mm`文件
+
+广告平台渠道请参考详细文档 [广告平台iOS集成指引](https://www.openinstall.io/doc/ad_ios.html)  
+
+### 2、ASA渠道
+
+修改或者替换 iOS 目录下的 `OpeninstallCocosJS` 文件夹中的 `Openinstall.mm`文件，参考或者直接替换为iOS 目录下的 `adtrack` 文件夹中的 `Openinstall.mm`文件
+
+ASA渠道请参考详细文档 [ASA渠道使用指南](https://www.openinstall.io/doc/asa.html)
