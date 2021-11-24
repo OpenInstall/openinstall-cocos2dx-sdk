@@ -36,7 +36,7 @@
 ``` xml
     <meta-data
         android:name="com.openinstall.APP_KEY"
-        android:value="OPENINSTALL_APPKEY"/>
+        android:value="openinstall为应用分配的appkey"/>
 ```
 #### scheme 配置
 - 将启动 `AppActivity` 继承 openinstall 提供的 `OpenInstallActivity`
@@ -64,7 +64,7 @@
             <category android:name="android.intent.category.DEFAULT"/>
             <category android:name="android.intent.category.BROWSABLE"/>
 
-            <data android:scheme="OPENINSTALL_SCHEME"/>
+            <data android:scheme="openinstall为应用分配的scheme"/>
         </intent-filter>
 
     </activity>
@@ -82,7 +82,7 @@
 传入参数说明：   
 | 参数名| 参数类型 | 描述 |  
 | --- | --- | --- |
-| adEnabled| bool | 是否需要 SDK 获取广告追踪相关参数 |
+| adEnabled| bool | 广告平台接入开关（必须） |
 | macDisabled | bool | 是否禁止 SDK 获取 mac 地址 |
 | imeiDisabled | bool | 是否禁止 SDK 获取 imei |
 | gaid | string | 通过 google api 获取到的 advertisingId，SDK 将不再获取gaid |

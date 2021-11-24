@@ -51,7 +51,7 @@
 ``` xml
     <meta-data
         android:name="com.openinstall.APP_KEY"
-        android:value="OPENINSTALL_APPKEY"/>
+        android:value="openinstall为应用分配的appkey"/>
 ```
 #### scheme 配置
 - 将启动 `AppActivity` 替换成 openinstall 提供的 `OpenInstallActivity`
@@ -79,7 +79,7 @@
             <category android:name="android.intent.category.DEFAULT"/>
             <category android:name="android.intent.category.BROWSABLE"/>
 
-            <data android:scheme="OPENINSTALL_SCHEME"/>
+            <data android:scheme="openinstall为应用分配的scheme"/>
         </intent-filter>
 
     </activity>
@@ -92,17 +92,18 @@
     openInstall2dx::AndroidConfig adConfig = openInstall2dx::AndroidConfig();
     // SDK 需要获取广告追踪相关参数
     adConfig.setAdEnabled(true);
-    // SDK 使用传入的oaid，不再获取oaid
-    adConfig.setOaid("通过移动安全联盟获取到的 oaid");
-    // SDK 使用传入的gaid，不再获取gaid
-    adConfig.setGaid("通过 google api 获取到的 advertisingId");
-    // 禁止 SDK 获取 imei
-    adConfig.setImeiDisabled(true);
-    // 禁止 SDK 获取 mac 地址
-    adConfig.setMacDisabled(true);
     openInstall2dx::OpenInstall::configAndroid(adConfig);
 ```
 > 注意：`OpenInstall::config(adEnabled, oaid, gaid)` 接口已移除，请使用新的配置接口  
+
+AndroidConfig 属性说明：   
+| 参数名| 参数类型 | 描述 |  
+| --- | --- | --- |
+| adEnabled| bool | 广告平台接入开关（必须） |
+| macDisabled | bool | 是否禁止 SDK 获取 mac 地址 |
+| imeiDisabled | bool | 是否禁止 SDK 获取 imei |
+| gaid | string | 通过 google api 获取到的 advertisingId，SDK 将不再获取gaid |
+| oaid | string | 通过移动安全联盟获取到的 oaid，SDK 将不再获取oaid |
 
 2、为了精准地匹配到渠道，需要获取设备唯一标识码（IMEI），因此需要在 AndroidManifest.xml 中添加权限声明 
 ```
