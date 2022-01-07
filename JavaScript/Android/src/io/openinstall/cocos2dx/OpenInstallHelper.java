@@ -27,7 +27,6 @@ public class OpenInstallHelper {
     private static final String TAG = "OpenInstallHelper";
     private static volatile boolean initialized = false;
     private static boolean registerWakeup = false;
-    private static boolean alwaysCallback = false;
     private static AppData wakeupDataHolder = null;
     private static Intent wakeupIntent = null;
     private static Configuration configuration = null;
@@ -151,15 +150,16 @@ public class OpenInstallHelper {
         });
     }
 
-    public static void registerWakeup(final boolean always) {
+    public static void registerWakeup() {
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "registerWakeup alwaysCallback=" + always);
+                Log.d(TAG, "registerWakeup");
                 registerWakeup = true;
-                alwaysCallback = always;
-                sendWakeup(wakeupDataHolder);
-                wakeupDataHolder = null;
+                if (wakeupDataHolder != null) {
+                    sendWakeup(wakeupDataHolder);
+                    wakeupDataHolder = null;
+                }
             }
         });
     }
@@ -175,7 +175,11 @@ public class OpenInstallHelper {
                     if (registerWakeup) {
                         sendWakeup(appData);
                     } else {
-                        wakeupDataHolder = appData;
+                        if (appData == null) {
+                            wakeupDataHolder = new AppData();
+                        } else {
+                            wakeupDataHolder = appData;
+                        }
                     }
 
                 }
@@ -186,18 +190,16 @@ public class OpenInstallHelper {
     }
 
     private static void sendWakeup(AppData appData) {
-        if (appData != null || alwaysCallback) {
-            if (appData == null) {
-                appData = new AppData();
-            }
-            final JSONObject json = toJson(appData);
-            runOnGLThread(new Runnable() {
-                @Override
-                public void run() {
-                    callback(CALLBACK_WAKEUP, json.toString());
-                }
-            });
+        if (appData == null) {
+            appData = new AppData();
         }
+        final JSONObject json = toJson(appData);
+        runOnGLThread(new Runnable() {
+            @Override
+            public void run() {
+                callback(CALLBACK_WAKEUP, json.toString());
+            }
+        });
     }
 
     public static void reportRegister() {

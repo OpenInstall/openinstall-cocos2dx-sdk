@@ -56,11 +56,11 @@ var openinstall = {
         }
     },
 	
-    registerWakeUpHandler: function (callback, alwaysCallback) {
+    registerWakeUpHandler: function (callback) {
         this.wakeupCallback = callback;
         if (cc.sys.OS_ANDROID == cc.sys.os) {
             jsb.reflection.callStaticMethod("io/openinstall/cocos2dx/OpenInstallHelper",
-                "registerWakeup", "(Z)V", alwaysCallback||false);
+                "registerWakeup", "()V");
         } else if(cc.sys.OS_IOS == cc.sys.os){
             jsb.reflection.callStaticMethod("IOSOpenInstallBridge","registerWakeUpHandler");
         }

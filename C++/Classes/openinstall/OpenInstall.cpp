@@ -73,17 +73,6 @@ void OpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData))
 #endif
 }
 
-void
-OpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData), bool alwaysCallback) {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    AndroidOpenInstall::registerWakeUpHandler(wakeupCallback, alwaysCallback);
-#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-
-    CPOpenInstall::registerWakeUpHandlerToNative(wakeupCallback);
-
-#endif
-}
-
 void OpenInstall::reportRegister() {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     AndroidOpenInstall::reportRegister();

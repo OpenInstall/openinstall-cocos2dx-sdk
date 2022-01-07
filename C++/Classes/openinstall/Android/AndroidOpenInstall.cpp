@@ -108,16 +108,11 @@ void AndroidOpenInstall::getInstallCanRetry(float s, void (*installRetryCallback
 }
 
 void AndroidOpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData)) {
-    registerWakeUpHandler(wakeupCallback, false);
-}
-
-void AndroidOpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData),
-                                               bool alwaysCallback) {
     JniMethodInfo methodInfo_registerWakeup;
     if (!JniHelper::getStaticMethodInfo(methodInfo_registerWakeup,
                                         "io/openinstall/sdk/OpenInstallHelper",
                                         "registerWakeup",
-                                        "(Z)V")) {
+                                        "()V")) {
         LOGE("get OpenInstallHelper.registerWakeup JniMethodInfo failed");
         LOGD("Java 方法调用失败，请获取最新代码并替换文件");
         return;
@@ -125,8 +120,7 @@ void AndroidOpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData ap
     setAppWakeUpCallbackMethod(wakeupCallback);
     // 调用方法
     methodInfo_registerWakeup.env->CallStaticVoidMethod(methodInfo_registerWakeup.classID,
-                                                        methodInfo_registerWakeup.methodID,
-                                                        alwaysCallback);
+                                                        methodInfo_registerWakeup.methodID);
     LOGD("registerWakeUpHandler success");
 }
 

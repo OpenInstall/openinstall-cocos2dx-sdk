@@ -24,8 +24,6 @@ public:
 
     static void registerWakeUpHandler(void (*wakeupCallback)(AppData appData));
 
-    static void registerWakeUpHandler(void (*wakeupCallback)(AppData appData), bool alwaysCallback);
-
     static void reportRegister();
 
     static void reportEffectPoint(const char *poindId, long pointValue);
