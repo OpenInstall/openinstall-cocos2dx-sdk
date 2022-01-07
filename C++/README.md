@@ -2,11 +2,6 @@
 
 cocos2d-x 集成 openinstall SDK
 
-**注意：请使用最新的稳定版本集成**  
-从 [Releases](https://github.com/OpenInstall/openinstall-cocos2dx-sdk/releases) 中选择最新发布的版本，按图标识获取稳定版本代码和文档
-
-![最新稳定版](https://res.cdn.openinstall.io/doc/latest-release.png)
-
 ## Android 集成
 集成 openinstall SDK 到 cocos2d-x Android 项目中，请参考 [Android 集成指南](README/Android.md)
 
@@ -35,7 +30,7 @@ void AppDelegate::initGLContextAttrs()
 }
 ```
 > **注意：** 请在调用初始化后，再调用 openinstall 其它 api。
-### 2 快速安装与一键跳转
+### 2 快速安装与一键拉起
 
 在应用启动时，注册拉起回调。当 App 被唤醒时，可以及时在回调中获取跳转携带的数据  
 可在 `AppDelegate` 的 `initGLContextAttrs` 的方法中，在初始化后调用。
@@ -84,4 +79,4 @@ SDK 会自动完成访问量、点击量、安装量、活跃量、留存率等�
 
 ## 如有疑问
 
-若您在集成或使用中有任何疑问或者困难，请 [联系我们](https://www.openinstall.io/)。 
+若您在集成或使用中有任何疑问或者困难，请 [咨询openinstall客服](https://www.openinstall.io/)。 
