@@ -8,8 +8,10 @@ import android.util.Log;
 import com.fm.openinstall.Configuration;
 import com.fm.openinstall.OpenInstall;
 import com.fm.openinstall.listener.AppInstallAdapter;
-import com.fm.openinstall.listener.AppWakeUpAdapter;
+import com.fm.openinstall.listener.AppInstallRetryAdapter;
+import com.fm.openinstall.listener.AppWakeUpListener;
 import com.fm.openinstall.model.AppData;
+import com.fm.openinstall.model.Error;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
@@ -23,9 +25,10 @@ import org.json.JSONObject;
 public class OpenInstallHelper {
 
     private static final String TAG = "OpenInstallHelper";
-    private static boolean registerWakeup = false;
     private static volatile boolean initialized = false;
-    private static String wakeupDataHolder = null;
+    private static boolean registerWakeup = false;
+    private static boolean alwaysCallback = false;
+    private static AppData wakeupDataHolder = null;
     private static Intent wakeupIntent = null;
     private static Configuration configuration = null;
 
@@ -98,26 +101,8 @@ public class OpenInstallHelper {
     private static void initialized() {
         initialized = true;
         if (wakeupIntent != null) {
-            OpenInstall.getWakeUp(wakeupIntent, new AppWakeUpAdapter() {
-                @Override
-                public void onWakeUp(AppData appData) {
-                    wakeupIntent = null;
-                    final String json = toJson(appData);
-                    Log.d(TAG, json);
-                    if (!registerWakeup) {
-                        Log.d(TAG, "wakeupCallback not register , wakeupData = " + json);
-                        wakeupDataHolder = json;
-                        return;
-                    }
-                    runOnGLThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback(CALLBACK_WAKEUP, json);
-                        }
-                    });
-
-                }
-            });
+            getWakeup(wakeupIntent);
+            wakeupIntent = null;
         }
     }
 
@@ -128,12 +113,11 @@ public class OpenInstallHelper {
                 OpenInstall.getInstall(new AppInstallAdapter() {
                     @Override
                     public void onInstall(AppData appData) {
-                        final String json = toJson(appData);
-                        Log.d(TAG, "installData = " + json);
+                        final JSONObject json = toJson(appData);
                         runOnGLThread(new Runnable() {
                             @Override
                             public void run() {
-                                callback(CALLBACK_INSTALL, json);
+                                callback(CALLBACK_INSTALL, json.toString());
                             }
                         });
                     }
@@ -142,24 +126,78 @@ public class OpenInstallHelper {
         });
     }
 
-    public static void registerWakeup() {
+    public static void getInstallCanRetry(final int s) {
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                registerWakeup = true;
-                if (wakeupDataHolder != null) {
-                    Log.d(TAG, "wakeupDataHolder = " + wakeupDataHolder);
-                    runOnGLThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback(CALLBACK_WAKEUP, wakeupDataHolder);
-                            wakeupDataHolder = null;
+                OpenInstall.getInstallCanRetry(new AppInstallRetryAdapter() {
+                    @Override
+                    public void onInstall(AppData appData, boolean retry) {
+                        final JSONObject json = toJson(appData);
+                        try {
+                            json.put("retry", retry);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    });
-
-                }
+                        runOnGLThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback(CALLBACK_INSTALL, json.toString());
+                            }
+                        });
+                    }
+                }, s);
             }
         });
+    }
+
+    public static void registerWakeup(final boolean always) {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "registerWakeup alwaysCallback=" + always);
+                registerWakeup = true;
+                alwaysCallback = always;
+                sendWakeup(wakeupDataHolder);
+                wakeupDataHolder = null;
+            }
+        });
+    }
+
+    public static void getWakeup(Intent intent) {
+        if (initialized) {
+            OpenInstall.getWakeUpAlwaysCallback(intent, new AppWakeUpListener() {
+                @Override
+                public void onWakeUpFinish(AppData appData, Error error) {
+                    if (error != null) {
+                        Log.d(TAG, "getWakeUpAlwaysCallback " + error.toString());
+                    }
+                    if (registerWakeup) {
+                        sendWakeup(appData);
+                    } else {
+                        wakeupDataHolder = appData;
+                    }
+
+                }
+            });
+        } else {
+            wakeupIntent = intent;
+        }
+    }
+
+    private static void sendWakeup(AppData appData) {
+        if (appData != null || alwaysCallback) {
+            if (appData == null) {
+                appData = new AppData();
+            }
+            final JSONObject json = toJson(appData);
+            runOnGLThread(new Runnable() {
+                @Override
+                public void run() {
+                    callback(CALLBACK_WAKEUP, json.toString());
+                }
+            });
+        }
     }
 
     public static void reportRegister() {
@@ -180,48 +218,17 @@ public class OpenInstallHelper {
         });
     }
 
-    /**
-     * 应用被拉起时，将调用此方法获取拉起参数
-     * 当 openinstall 未初始化时，将保存 intent，待初始化后再使用
-     *
-     * @param intent
-     */
-    public static void getWakeup(Intent intent) {
-        if (initialized) {
-            OpenInstall.getWakeUp(intent, new AppWakeUpAdapter() {
-                @Override
-                public void onWakeUp(AppData appData) {
-                    final String json = toJson(appData);
-                    Log.d(TAG, json);
-                    if (!registerWakeup) {
-                        Log.d(TAG, "wakeupCallback not register , wakeupData = " + json);
-                        wakeupDataHolder = json;
-                        return;
-                    }
-                    runOnGLThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback(CALLBACK_WAKEUP, json);
-                        }
-                    });
-                }
-            });
-        } else {
-            wakeupIntent = intent;
-        }
-    }
-
-
-    private static String toJson(AppData appData) {
+    private static JSONObject toJson(AppData appData) {
         JSONObject jsonObject = new JSONObject();
-
-        try {
-            jsonObject.put("channelCode", appData.getChannel());
-            jsonObject.put("bindData", appData.getData());
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (appData != null) {
+            try {
+                jsonObject.put("channelCode", appData.getChannel());
+                jsonObject.put("bindData", appData.getData());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-        return jsonObject.toString();
+        return jsonObject;
     }
 
     private static void callback(String method, String data) {

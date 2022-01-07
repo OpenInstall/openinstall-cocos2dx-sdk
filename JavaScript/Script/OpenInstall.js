@@ -45,11 +45,22 @@ var openinstall = {
             jsb.reflection.callStaticMethod("IOSOpenInstallBridge","getInstall:",s);
         }
     },
-    registerWakeUpHandler: function (callback) {
+	
+    getInstallCanRetry: function (s, callback) {
+        this.installCallback = callback;
+        if (cc.sys.OS_ANDROID == cc.sys.os) {
+            jsb.reflection.callStaticMethod("io/openinstall/cocos2dx/OpenInstallHelper",
+                "getInstallCanRetry", "(I)V", s);
+        } else if(cc.sys.OS_IOS == cc.sys.os){
+            //cc.log("此方法仅适用于Android平台");
+        }
+    },
+	
+    registerWakeUpHandler: function (callback, alwaysCallback) {
         this.wakeupCallback = callback;
         if (cc.sys.OS_ANDROID == cc.sys.os) {
             jsb.reflection.callStaticMethod("io/openinstall/cocos2dx/OpenInstallHelper",
-                "registerWakeup", "()V");
+                "registerWakeup", "(Z)V", alwaysCallback||false);
         } else if(cc.sys.OS_IOS == cc.sys.os){
             jsb.reflection.callStaticMethod("IOSOpenInstallBridge","registerWakeUpHandler");
         }

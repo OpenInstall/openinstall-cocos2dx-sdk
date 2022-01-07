@@ -3,12 +3,6 @@ cocos2d-x 集成 openinstall SDK
 
 此仓库是根据 Cocos Creator 集成而写，直接使用 `cocos2d-js` 的用户请参考 [cocos2d-js集成](README/cocos2d-js.md) 修改相应文件后再集成
 
-**注意：请使用最新的稳定版本集成**  
-从 [Releases](https://github.com/OpenInstall/openinstall-cocos2dx-sdk/releases) 中选择最新发布的版本，按图标识获取稳定版本代码和文档
-
-![最新稳定版](https://res.cdn.openinstall.io/doc/latest-release.png)
-
-
 ## Android 集成
 
 集成 openinstall SDK 到 cocos2d-x Android 项目中，请参考 [Android 集成指南](README/Android.md)
@@ -30,7 +24,7 @@ App 启动时，请确保用户同意《隐私政策》之后，再调用初始�
 ``` js
 openinstall.init();
 ```
-### 2 快速安装和一键跳转  
+### 2 快速安装和一键拉起  
 
 在应用启动时，注册拉起回调。当 App 被唤醒时，可以及时在回调中获取跳转携带的数据    
 可在组件脚本的`OnLoad`方法中调用，请在初始化后调用。
@@ -87,5 +81,5 @@ openinstall.reportEffectPoint("effect_test", 1);
 
 ## 如有疑问
 
-若您在集成或使用中有任何疑问或者困难，请 [联系我们](https://www.openinstall.io/)。 
+若您在集成或使用中有任何疑问或者困难，请 [联系openinstall客服](https://www.openinstall.io/)。 
 
