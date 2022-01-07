@@ -20,8 +20,12 @@ namespace openInstall2dx {
         static void init();
 
         static void getInstall(float timeout,void (*installCallback)(AppData appData));
+
+        static void getInstallCanRetry(float timeout,void (*installCallback)(AppData appData, bool retry));
         
         static void registerWakeUpHandler(void (*wakeupCallback)(AppData appData));
+
+        static void registerWakeUpHandler(void (*wakeupCallback)(AppData appData), bool alwaysCallback);
         
         static void reportRegister();
         

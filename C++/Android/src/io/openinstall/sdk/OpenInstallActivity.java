@@ -36,14 +36,14 @@ public class OpenInstallActivity extends Cocos2dxActivity {
         super.setEnableVirtualButton(false);
         super.onCreate(savedInstanceState);
 
-        OpenInstallHelper.wakeup(getIntent());
+        OpenInstallHelper.getWakeup(getIntent());
 
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        OpenInstallHelper.wakeup(intent);
+        OpenInstallHelper.getWakeup(intent);
     }
 
 }

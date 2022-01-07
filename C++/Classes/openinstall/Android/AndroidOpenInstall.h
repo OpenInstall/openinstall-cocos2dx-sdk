@@ -20,7 +20,11 @@ public:
 
     static void getInstall(float s, void (*installCallback)(AppData appData));
 
+    static void getInstallCanRetry(float timeout,void (*installRetryCallback)(AppData appData, bool retry));
+
     static void registerWakeUpHandler(void (*wakeupCallback)(AppData appData));
+
+    static void registerWakeUpHandler(void (*wakeupCallback)(AppData appData), bool alwaysCallback);
 
     static void reportRegister();
 

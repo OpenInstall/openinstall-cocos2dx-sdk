@@ -8,7 +8,7 @@
 
 #include <android/log.h>
 
-#define  LOG_TAG    "OpenInstall"
+#define  LOG_TAG    "OpenInstallProxy"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 
 AppData jAppData2AppData(jobject jAppData) {
@@ -27,7 +27,7 @@ AppData jAppData2AppData(jobject jAppData) {
 }
 
 
-JNIEXPORT void JNICALL Java_io_openinstall_sdk_AppWakeUpCallback_wakeup
+JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_wakeup
         (JNIEnv *env, jobject obj, jobject jAppData) {
     LOGD("AppWakeUpCallback wakeup");
     if (NULL == appWakeUpCallbackMethod) {
@@ -41,7 +41,7 @@ JNIEXPORT void JNICALL Java_io_openinstall_sdk_AppWakeUpCallback_wakeup
 }
 
 
-JNIEXPORT void JNICALL Java_io_openinstall_sdk_AppInstallCallback_install
+JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_install
         (JNIEnv *env, jobject obj, jobject jAppData) {
     LOGD("AppInstallCallback install");
     if (NULL == appInstallCallbackMethod) {
@@ -54,10 +54,27 @@ JNIEXPORT void JNICALL Java_io_openinstall_sdk_AppInstallCallback_install
     appInstallCallbackMethod(appData);
 }
 
+JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_installRetry
+        (JNIEnv *env, jobject obj, jobject jAppData, jboolean retry) {
+    LOGD("AppInstallRetryCallback install");
+    if (NULL == appInstallRetryCallbackMethod) {
+        return;
+    }
+    if (NULL == jAppData) {
+        return;
+    }
+    AppData appData = jAppData2AppData(jAppData);
+    appInstallRetryCallbackMethod(appData, retry);
+}
+
 void setAppWakeUpCallbackMethod(void (*callbackMethod)(AppData appData)) {
     appWakeUpCallbackMethod = callbackMethod;
 }
 
 void setAppInstallCallbackMethod(void (*callbackMethod)(AppData appData)) {
     appInstallCallbackMethod = callbackMethod;
+}
+
+void setAppInstallRetryCallbackMethod(void (*callbackMethod)(AppData appData, bool retry)) {
+    appInstallRetryCallbackMethod = callbackMethod;
 }

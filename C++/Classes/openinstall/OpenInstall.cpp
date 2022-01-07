@@ -52,9 +52,31 @@ void OpenInstall::getInstall(float s, void (*installCallback)(AppData appData)) 
 
 }
 
+void
+OpenInstall::getInstallCanRetry(float s, void (*installCallback)(AppData appData, bool retry)) {
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    AndroidOpenInstall::getInstallCanRetry(s, installCallback);
+#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    // just support on android
+#endif
+
+}
+
 void OpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData)) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     AndroidOpenInstall::registerWakeUpHandler(wakeupCallback);
+#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+
+    CPOpenInstall::registerWakeUpHandlerToNative(wakeupCallback);
+
+#endif
+}
+
+void
+OpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData), bool alwaysCallback) {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    AndroidOpenInstall::registerWakeUpHandler(wakeupCallback, alwaysCallback);
 #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 
     CPOpenInstall::registerWakeUpHandlerToNative(wakeupCallback);

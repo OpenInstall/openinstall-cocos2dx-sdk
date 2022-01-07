@@ -1,6 +1,5 @@
 package io.openinstall.sdk;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -9,6 +8,13 @@ import android.util.Log;
 
 import com.fm.openinstall.Configuration;
 import com.fm.openinstall.OpenInstall;
+import com.fm.openinstall.listener.AppInstallAdapter;
+import com.fm.openinstall.listener.AppInstallRetryAdapter;
+import com.fm.openinstall.listener.AppWakeUpListener;
+import com.fm.openinstall.model.AppData;
+import com.fm.openinstall.model.Error;
+
+import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 /**
  * Created by Wenki on 2020/7/3.
@@ -16,10 +22,12 @@ import com.fm.openinstall.OpenInstall;
 public class OpenInstallHelper {
 
     public static final String TAG = "OpenInstallHelper";
-    private final static AppWakeUpCallback wakeUpCallback = new AppWakeUpCallback();
-    private final static AppInstallCallback installCallback = new AppInstallCallback();
-    private static volatile boolean initialized = false;
+    private final static OpenInstallCallback callback = new OpenInstallCallback();
+    private static boolean initialized = false;
+    private static boolean registerWakeup = false;
+    private static boolean alwaysCallback = false;
     private static Intent wakeUpIntent = null;
+    private static AppData wakeupDataHolder = null;
 
     private static Configuration configuration = null;
 
@@ -67,34 +75,107 @@ public class OpenInstallHelper {
                 OpenInstall.init(context, configuration);
                 initialized = true;
                 if (wakeUpIntent != null) {
-                    Intent intent = wakeUpIntent;
+                    getWakeup(wakeUpIntent);
                     wakeUpIntent = null;
-                    OpenInstall.getWakeUp(intent, wakeUpCallback);
                 }
             }
         });
     }
 
-    public static void wakeup(final Intent intent) {
-        runOnUIThread(new Runnable() {
-            @Override
-            public void run() {
-                if (initialized) {
-                    OpenInstall.getWakeUp(intent, wakeUpCallback);
-                } else {
-                    wakeUpIntent = intent;
+    /**
+     * 移除，保留一段时间
+     */
+    @Deprecated
+    public static void wakeup(Intent intent) {
+        getWakeup(intent);
+    }
+
+    public static void getWakeup(Intent intent) {
+        if (initialized) {
+            OpenInstall.getWakeUpAlwaysCallback(intent, new AppWakeUpListener() {
+                @Override
+                public void onWakeUpFinish(AppData appData, Error error) {
+                    if (error != null) {
+                        Log.d(TAG, "getWakeUpAlwaysCallback " + error.toString());
+                    }
+                    if (registerWakeup) {
+                        sendWakeup(appData);
+                    } else {
+                        wakeupDataHolder = appData;
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            wakeUpIntent = intent;
+        }
     }
 
     public static void getInstall(final int second) {
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                OpenInstall.getInstall(installCallback, second);
+                OpenInstall.getInstall(new AppInstallAdapter() {
+                    @Override
+                    public void onInstall(final AppData appData) {
+                        Cocos2dxGLSurfaceView.getInstance().queueEvent(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.install(appData);
+                            }
+                        });
+                    }
+                }, second);
             }
         });
+    }
+
+    public static void getInstallCanRetry(final int second) {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstall.getInstallCanRetry(new AppInstallRetryAdapter() {
+                    @Override
+                    public void onInstall(final AppData appData, final boolean retry) {
+                        Cocos2dxGLSurfaceView.getInstance().queueEvent(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.installRetry(appData, retry);
+                            }
+                        });
+                    }
+                }, second);
+            }
+        });
+    }
+
+    public static void registerWakeup(final boolean always) {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                alwaysCallback = always;
+                registerWakeup = true;
+                if (wakeupDataHolder != null) {
+                    final AppData appData = wakeupDataHolder;
+                    wakeupDataHolder = null;
+                    sendWakeup(appData);
+                }
+            }
+        });
+    }
+
+    private static void sendWakeup(AppData appData) {
+        if (appData != null || alwaysCallback) {
+            if (appData == null) {
+                appData = new AppData();
+            }
+            final AppData finalAppData = appData;
+            Cocos2dxGLSurfaceView.getInstance().queueEvent(new Runnable() {
+                @Override
+                public void run() {
+                    callback.wakeup(finalAppData);
+                }
+            });
+        }
     }
 
     public static void reportRegister() {

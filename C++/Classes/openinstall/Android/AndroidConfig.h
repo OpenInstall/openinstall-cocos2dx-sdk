@@ -10,11 +10,11 @@ namespace openInstall2dx {
     class AndroidConfig {
 
     private:
-        bool _adEnabled;
-        char *_oaid;
-        char *_gaid;
-        bool _imeiDisabled;
-        bool _macDisabled;
+        bool _adEnabled = false;
+        char *_oaid = nullptr;
+        char *_gaid = nullptr;
+        bool _imeiDisabled = false;
+        bool _macDisabled = false;
 
     public:
 

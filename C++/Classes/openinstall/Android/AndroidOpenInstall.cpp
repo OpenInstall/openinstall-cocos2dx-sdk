@@ -9,7 +9,7 @@
 #include "OpenInstallProxy.h"
 #include <android/log.h>
 
-#define  LOG_TAG    "OpenInstallCpp"
+#define  LOG_TAG    "AndroidOpenInstall"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
@@ -84,9 +84,49 @@ void AndroidOpenInstall::getInstall(float s, void (*installCallback)(AppData app
     LOGD("call getInstall success");
 }
 
-void AndroidOpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData)) {
-    setAppWakeUpCallbackMethod(wakeupCallback);
+void AndroidOpenInstall::getInstallCanRetry(float s, void (*installRetryCallback)(AppData appData,
+                                                                                  bool retry)) {
 
+    JniMethodInfo methodInfo_getInstall;
+    if (!JniHelper::getStaticMethodInfo(methodInfo_getInstall,
+                                        "io/openinstall/sdk/OpenInstallHelper",
+                                        "getInstallCanRetry",
+                                        "(I)V")) {
+        LOGE("get OpenInstallHelper.getInstallCanRetry JniMethodInfo failed");
+        LOGD("Java 方法调用失败，请获取最新代码并替换文件");
+        return;
+    }
+    int timeout = static_cast<int>(s);
+    // 设置回调
+    setAppInstallRetryCallbackMethod(installRetryCallback);
+    // 调用方法
+    methodInfo_getInstall.env->CallStaticVoidMethod(methodInfo_getInstall.classID,
+                                                    methodInfo_getInstall.methodID,
+                                                    timeout);
+
+    LOGD("call getInstallCanRetry success");
+}
+
+void AndroidOpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData)) {
+    registerWakeUpHandler(wakeupCallback, false);
+}
+
+void AndroidOpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData),
+                                               bool alwaysCallback) {
+    JniMethodInfo methodInfo_registerWakeup;
+    if (!JniHelper::getStaticMethodInfo(methodInfo_registerWakeup,
+                                        "io/openinstall/sdk/OpenInstallHelper",
+                                        "registerWakeup",
+                                        "(Z)V")) {
+        LOGE("get OpenInstallHelper.registerWakeup JniMethodInfo failed");
+        LOGD("Java 方法调用失败，请获取最新代码并替换文件");
+        return;
+    }
+    setAppWakeUpCallbackMethod(wakeupCallback);
+    // 调用方法
+    methodInfo_registerWakeup.env->CallStaticVoidMethod(methodInfo_registerWakeup.classID,
+                                                        methodInfo_registerWakeup.methodID,
+                                                        alwaysCallback);
     LOGD("registerWakeUpHandler success");
 }
 
@@ -96,7 +136,6 @@ void AndroidOpenInstall::reportRegister() {
                                         "io/openinstall/sdk/OpenInstallHelper",
                                         "reportRegister", "()V")) {
         LOGD("get OpenInstallHelper.reportRegister JniMethodInfo failed");
-        LOGD("Java 方法调用失败，请获取最新代码并替换文件");
         if (!JniHelper::getStaticMethodInfo(methodInfo_reportRegister,
                                             "com/fm/openinstall/OpenInstall",
                                             "reportRegister", "()V")) {
@@ -116,8 +155,7 @@ void AndroidOpenInstall::reportEffectPoint(const char *pId, long pValue) {
     if (!JniHelper::getStaticMethodInfo(methodInfo_reportEffectPoint,
                                         "io/openinstall/sdk/OpenInstallHelper",
                                         "reportEffectPoint", "(Ljava/lang/String;J)V")) {
-        LOGD("get OpenInstall.reportEffectPoint JniMethodInfo failed");
-        LOGD("Java 方法调用失败，请获取最新代码并替换文件");
+        LOGD("get OpenInstallHelper.reportEffectPoint JniMethodInfo failed");
         if (!JniHelper::getStaticMethodInfo(methodInfo_reportEffectPoint,
                                             "com/fm/openinstall/OpenInstall",
                                             "reportEffectPoint", "(Ljava/lang/String;J)V")) {
