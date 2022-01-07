@@ -74,6 +74,20 @@ function openinstall:getInstall(s, callback)
     end
 end
 
+-- 获取安装参数
+function openinstall:getInstallCanRetry(s, callback)
+	print("call getInstallCanRetry start")
+	if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
+        local luaj = require "cocos.cocos2d.luaj"
+		local args = {s, callback}
+		local signs = "(II)V"
+		local ok,ret = luaj.callStaticMethod(openinstallClassName, "getInstallCanRetry", args, signs)
+		if not ok then
+			print("call getInstallCanRetry fail"..ret)
+		end
+	end
+end
+
 -- 注册跳转回调，获取跳转参数
 function openinstall:registerWakeupHandler(callback)
 	print("call registerWakeupHandler start")
