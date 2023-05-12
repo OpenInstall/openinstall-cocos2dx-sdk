@@ -8,13 +8,17 @@ import android.util.Log;
 
 import com.fm.openinstall.Configuration;
 import com.fm.openinstall.OpenInstall;
-import com.fm.openinstall.listener.AppInstallAdapter;
+import com.fm.openinstall.listener.AppInstallListener;
 import com.fm.openinstall.listener.AppInstallRetryAdapter;
 import com.fm.openinstall.listener.AppWakeUpListener;
+import com.fm.openinstall.listener.ResultCallback;
 import com.fm.openinstall.model.AppData;
 import com.fm.openinstall.model.Error;
 
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Wenki on 2020/7/3.
@@ -42,28 +46,53 @@ public class OpenInstallHelper {
         }
     }
 
-    public static void config(final boolean adEnabled, final String oaid, final String gaid,
-                              final boolean imeiDisabled, final boolean macDisabled) {
+    private static boolean hasTrue(Map<String, String> map, String key) {
+        if (map.containsKey(key)) {
+            return Boolean.parseBoolean(map.get(key));
+        }
+        return false;
+    }
+
+    public static void config(final Map<String, String> paramMap) {
+        Log.d(TAG, paramMap.toString());
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
                 Configuration.Builder builder = new Configuration.Builder();
-                builder.adEnabled(adEnabled);
-                builder.oaid(oaid);
-                builder.gaid(gaid);
-                if (imeiDisabled) {
+                if (hasTrue(paramMap, "adEnabled")) {
+                    builder.adEnabled(true);
+                }
+                if (paramMap.containsKey("oaid")) {
+                    builder.oaid(paramMap.get("oaid"));
+                }
+                if (paramMap.containsKey("gaid")) {
+                    builder.gaid(paramMap.get("gaid"));
+                }
+                if (hasTrue(paramMap, "imeiDisabled")) {
                     builder.imeiDisabled();
                 }
-                if (macDisabled) {
+                if (paramMap.containsKey("imei")) {
+                    builder.imei(paramMap.get("imei"));
+                }
+                if (hasTrue(paramMap, "macDisabled")) {
                     builder.macDisabled();
                 }
+                if (paramMap.containsKey("macAddress")) {
+                    builder.macAddress(paramMap.get("macAddress"));
+                }
+                if (paramMap.containsKey("androidId")) {
+                    builder.androidId(paramMap.get("androidId"));
+                }
+                if (paramMap.containsKey("serialNumber")) {
+                    builder.serialNumber(paramMap.get("serialNumber"));
+                }
+                if (hasTrue(paramMap, "simulatorDisabled")) {
+                    builder.simulatorDisabled();
+                }
+                if (hasTrue(paramMap, "storageDisabled")) {
+                    builder.storageDisabled();
+                }
                 configuration = builder.build();
-
-                Log.d(TAG, String.format("Configuration : adEnabled = %b, oaid = %s, gaid = %s, " +
-                                "imeiDisabled = %s, macDisabled = %s",
-                        configuration.isAdEnabled(),
-                        configuration.getOaid(), configuration.getGaid(),
-                        configuration.isImeiDisabled(), configuration.isMacDisabled()));
             }
         });
     }
@@ -114,13 +143,14 @@ public class OpenInstallHelper {
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                OpenInstall.getInstall(new AppInstallAdapter() {
+                OpenInstall.getInstall(new AppInstallListener() {
                     @Override
-                    public void onInstall(final AppData appData) {
+                    public void onInstallFinish(final AppData appData, final Error error) {
                         Cocos2dxGLSurfaceView.getInstance().queueEvent(new Runnable() {
                             @Override
                             public void run() {
-                                callback.install(appData);
+                                boolean shouldRetry = error != null && error.shouldRetry();
+                                callback.install(appData, shouldRetry);
                             }
                         });
                     }
@@ -135,11 +165,11 @@ public class OpenInstallHelper {
             public void run() {
                 OpenInstall.getInstallCanRetry(new AppInstallRetryAdapter() {
                     @Override
-                    public void onInstall(final AppData appData, final boolean retry) {
+                    public void onInstall(final AppData appData, final boolean shouldRetry) {
                         Cocos2dxGLSurfaceView.getInstance().queueEvent(new Runnable() {
                             @Override
                             public void run() {
-                                callback.installRetry(appData, retry);
+                                callback.install(appData, shouldRetry);
                             }
                         });
                     }
@@ -187,11 +217,35 @@ public class OpenInstallHelper {
         });
     }
 
-    public static void reportEffectPoint(final String pointId, final long pointValue) {
+    public static void reportEffectPoint(final String pointId, final long pointValue, final Map<String, String> extraMap) {
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
-                OpenInstall.reportEffectPoint(pointId, pointValue);
+                OpenInstall.reportEffectPoint(pointId, pointValue, extraMap);
+            }
+        });
+    }
+
+    public static void reportShare(final String shareCode, final String sharePlatform) {
+        runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                OpenInstall.reportShare(shareCode, sharePlatform, new ResultCallback<Void>() {
+                    @Override
+                    public void onResult(Void v, final Error error) {
+                        if(error != null){
+                            Log.d(TAG, "reportShare failed : " + error.getErrorMsg());
+                        }
+                        Cocos2dxGLSurfaceView.getInstance().queueEvent(new Runnable() {
+                            @Override
+                            public void run() {
+                                boolean shouldRetry = error != null && error.shouldRetry();
+                                String message = error == null ? "" : error.getErrorMsg();
+                                callback.onResult("share", null, shouldRetry, message);
+                            }
+                        });
+                    }
+                });
             }
         });
     }

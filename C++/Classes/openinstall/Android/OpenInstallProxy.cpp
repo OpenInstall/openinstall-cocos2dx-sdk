@@ -42,7 +42,7 @@ JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_wakeup
 
 
 JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_install
-        (JNIEnv *env, jobject obj, jobject jAppData) {
+        (JNIEnv *env, jobject obj, jobject jAppData, jboolean jShouldRetry) {
     LOGD("AppInstallCallback install");
     if (NULL == appInstallCallbackMethod) {
         return;
@@ -51,30 +51,34 @@ JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_install
         return;
     }
     AppData appData = jAppData2AppData(jAppData);
-    appInstallCallbackMethod(appData);
+    appInstallCallbackMethod(appData, jShouldRetry);
 }
 
-JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_installRetry
-        (JNIEnv *env, jobject obj, jobject jAppData, jboolean retry) {
-    LOGD("AppInstallRetryCallback install");
-    if (NULL == appInstallRetryCallbackMethod) {
+JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_onResult
+        (JNIEnv *env, jobject obj, jstring jMethod, jobject jResult, jboolean jShouldRetry, jstring jMessage) {
+    LOGD("ResultCallback onResult");
+    if (NULL == jMethod) {
         return;
     }
-    if (NULL == jAppData) {
-        return;
+
+    std::string method_id = cocos2d::JniHelper::jstring2string(jMethod);
+    if(method_id == "share"){
+        std::string error_msg = cocos2d::JniHelper::jstring2string(jMessage);
+        shareResultCallbackMethod(jShouldRetry, error_msg);
+    } else {
+        LOGD("ResultCallback onResult %s", method_id.c_str());
     }
-    AppData appData = jAppData2AppData(jAppData);
-    appInstallRetryCallbackMethod(appData, retry);
+
 }
 
-void setAppWakeUpCallbackMethod(void (*callbackMethod)(AppData appData)) {
+void setAppWakeUpCallbackMethod(void (*callbackMethod)(AppData)) {
     appWakeUpCallbackMethod = callbackMethod;
 }
 
-void setAppInstallCallbackMethod(void (*callbackMethod)(AppData appData)) {
+void setAppInstallCallbackMethod(void (*callbackMethod)(AppData, bool)) {
     appInstallCallbackMethod = callbackMethod;
 }
 
-void setAppInstallRetryCallbackMethod(void (*callbackMethod)(AppData appData, bool retry)) {
-    appInstallRetryCallbackMethod = callbackMethod;
+void setShareResultCallbackMethod(void (*callbackMethod)(bool, std::string)) {
+    shareResultCallbackMethod = callbackMethod;
 }

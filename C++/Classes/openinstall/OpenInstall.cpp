@@ -4,10 +4,11 @@
 
 
 #include "OpenInstall.h"
-#include "openinstall/Android/AndroidConfig.h"
+
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 
+#include "Android/AndroidConfig.h"
 #include "Android/AndroidOpenInstall.h"
 
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
@@ -18,13 +19,11 @@
 
 using namespace openInstall2dx;
 
-void OpenInstall::configAndroid(AndroidConfig adConfig) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+void OpenInstall::configAndroid(AndroidConfig adConfig) {
     AndroidOpenInstall::config(adConfig);
-#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    // just support on android
-#endif
 }
+#endif
 
 void OpenInstall::init() {
 
@@ -40,30 +39,27 @@ void OpenInstall::init() {
 
 }
 
-void OpenInstall::getInstall(float s, void (*installCallback)(AppData appData)) {
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+void OpenInstall::getInstall(float s, void (*installCallback)(AppData, bool)) {
     AndroidOpenInstall::getInstall(s, installCallback);
-#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-
-    CPOpenInstall::getInstallFrom(s,installCallback);
-
+}
 #endif
 
-}
 
-void
-OpenInstall::getInstallCanRetry(float s, void (*installCallback)(AppData appData, bool retry)) {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+void OpenInstall::getInstall(float s, void (*installCallback)(AppData)) {
+    CPOpenInstall::getInstallFrom(s,installCallback);
+}
+#endif
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+void OpenInstall::getInstallCanRetry(float s, void (*installCallback)(AppData, bool)) {
     AndroidOpenInstall::getInstallCanRetry(s, installCallback);
-#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    // just support on android
+}
 #endif
 
-}
-
-void OpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData appData)) {
+void OpenInstall::registerWakeUpHandler(void (*wakeupCallback)(AppData)) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     AndroidOpenInstall::registerWakeUpHandler(wakeupCallback);
 #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
@@ -88,5 +84,19 @@ void OpenInstall::reportEffectPoint(const char *pId, long pValue) {
 #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 
     CPOpenInstall::reportEffectPointToService(pId, pValue);
+#endif
+}
+
+void OpenInstall::reportEffectPoint(const char *pointId, long pointValue, std::map<std::string, std::string> extraMap){
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    AndroidOpenInstall::reportEffectPoint(pointId, pointValue, extraMap);
+#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#endif
+}
+
+void OpenInstall::reportShare(const char *shareCode, const char *sharePlatform, void (*callbackMethod)(bool, std::string)){
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    AndroidOpenInstall::reportShare(shareCode, sharePlatform, callbackMethod);
+#elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 #endif
 }

@@ -13,20 +13,20 @@ using namespace openInstall2dx;
 extern "C" {
 
 
-static void (*appWakeUpCallbackMethod)(AppData appData);
-static void (*appInstallCallbackMethod)(AppData appData);
-static void (*appInstallRetryCallbackMethod)(AppData appData, bool retry);
+static void (*appWakeUpCallbackMethod)(AppData);
+static void (*appInstallCallbackMethod)(AppData, bool);
+static void (*shareResultCallbackMethod)(bool, std::string);
 
 JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_wakeup
         (JNIEnv *, jobject, jobject);
 JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_install
-        (JNIEnv *, jobject, jobject);
-JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_installRetry
         (JNIEnv *, jobject, jobject, jboolean);
+JNIEXPORT void JNICALL Java_io_openinstall_sdk_OpenInstallCallback_onResult
+        (JNIEnv *, jobject, jstring, jobject, jboolean, jstring);
 
-void setAppWakeUpCallbackMethod(void (*callbackMethod)(AppData appData));
-void setAppInstallCallbackMethod(void (*callbackMethod)(AppData appData));
-void setAppInstallRetryCallbackMethod(void (*callbackMethod)(AppData appData, bool retry));
+void setAppWakeUpCallbackMethod(void (*callbackMethod)(AppData));
+void setAppInstallCallbackMethod(void (*callbackMethod)(AppData, bool));
+void setShareResultCallbackMethod(void (*callbackMethod)(bool, std::string));
 
 }
 #endif //PROJ_ANDROID_OPENINSTALLPROXY_H

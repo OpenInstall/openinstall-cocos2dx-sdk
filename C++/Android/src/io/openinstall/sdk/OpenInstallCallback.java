@@ -7,13 +7,10 @@ import com.fm.openinstall.model.AppData;
  */
 public class OpenInstallCallback {
 
-    // getInstall
-    native void install(AppData appData);
+    native void install(AppData appData, boolean shouldRetry);
 
-    // getInstallCanRetry
-    native void installRetry(AppData appData, boolean retry);
-
-    // getWakeup
     native void wakeup(AppData appData);
+
+    native void onResult(String method, Object obj, boolean shouldRetry, String message);
 
 }

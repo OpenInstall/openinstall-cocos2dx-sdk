@@ -7,7 +7,6 @@
 
 
 #include <string>
-//#include "cocos2d.h"
 
 namespace openInstall2dx {
     

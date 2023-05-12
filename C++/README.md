@@ -45,9 +45,13 @@ void AppDelegate::initGLContextAttrs()
 
 在应用需要安装参数时，调用以下 api 获取由 SDK 保存的安装参数，可设置超时时长，单位秒
 ``` cpp
-    openInstall2dx::OpenInstall::getInstall(10,[](openInstall2dx::AppData appData){
-        std::string channelCode = appData.getChannelCode();
-        std::string bindData = appData.getBindData();
+    openInstall2dx::OpenInstall::getInstall(8,[](openInstall2dx::AppData appData, bool shouldRetry){
+        if(shouldRetry){
+            // 未获取到参数，可重试
+        } else{
+            std::string channelCode = appData.getChannelCode();
+            std::string bindData = appData.getBindData();
+        }
     });
 ```
 
@@ -69,6 +73,27 @@ SDK 会自动完成访问量、点击量、安装量、活跃量、留存率等�
 ``` cpp
     openInstall2dx::OpenInstall::reportEffectPoint("effect_test", 1);
 ```
+
+#### 4.3 效果点明细统计
+请在 [openinstall 控制台](https://developer.openinstall.io/) 的 “效果点管理” 中添加对应的效果点，并启用“记录明细”，添加自定义参数
+``` cpp
+    std::map<std::string, std::string> extraMap = std::map<std::string, std::string>();
+    extraMap.insert(std::map<std::string, std::string>::value_type ("x", "1"));
+    extraMap.insert(std::map<std::string, std::string>::value_type ("y", "2"));
+    openInstall2dx::OpenInstall::reportEffectPoint("effect_detail", 1, extraMap);
+```
+
+### 5 裂变分享（高级版功能）
+分享上报主要是统计某个具体用户在某次分享中，分享给了哪个平台，再通过JS端绑定被分享的用户信息，进一步统计到被分享用户的激活回流等情况。分享平台请参考 openinstall 官网文档
+``` cpp
+    openInstall2dx::OpenInstall::reportShare("分享标识码，例如：u_123456", "分享平台，例如：QQ", [](bool shouldRetry, std::string message){
+        if(shouldRetry){
+            // 需要重试
+        }
+    });
+```
+可根据返回的数据中的`shouldRetry`决定是否需要重试，以及`message`查看失败的原因
+
 
 ## 导出apk/ipa包并上传
 代码集成完毕后，需要导出安装包上传openinstall后台，openinstall会自动完成所有的应用配置工作。  

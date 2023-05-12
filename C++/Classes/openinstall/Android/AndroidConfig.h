@@ -5,48 +5,45 @@
 #ifndef OPENINSTALL_ADCONFIG_H
 #define OPENINSTALL_ADCONFIG_H
 
+#include <map>
+#include <string>
+
 namespace openInstall2dx {
+
 
     class AndroidConfig {
 
     private:
-        bool _adEnabled = false;
-        char *_oaid = nullptr;
-        char *_gaid = nullptr;
-        bool _imeiDisabled = false;
-        bool _macDisabled = false;
+        std::map<std::string, std::string> properties = std::map<std::string, std::string>();
 
     public:
 
         AndroidConfig() {};
 
-        AndroidConfig(bool adEnabled, char *oaid, char *gaid, bool imeiDisabled, bool macDisabled) {
-            _adEnabled = adEnabled;
-            _oaid = oaid;
-            _gaid = gaid;
-            _imeiDisabled = imeiDisabled;
-            _macDisabled = macDisabled;
-        }
-
-        bool isAdEnabled();
+        std::map<std::string, std::string> getProperties();
 
         void setAdEnabled(bool adEnabled);
 
-        char *getOaid();
+        void setOaid(std::string  oaid);
 
-        void setOaid(char* oaid);
-
-        char *getGaid();
-
-        void setGaid(char* gaid);
-
-        bool isImeiDisabled();
+        void setGaid(std::string  gaid);
 
         void setImeiDisabled(bool imeiDisabled);
 
-        bool isMacDisabled();
+        void setImei(std::string imei);
 
         void setMacDisabled(bool macDisabled);
+
+        void setMacAddress(std::string macAddress);
+
+        void setAndroidId(std::string androidId);
+
+        void setSerialNumber(std::string serialNumber);
+
+        void setSimulatorDisabled(bool simulatorDisabled);
+
+        void setStorageDisabled(bool storageDisabled);
+        
 
     };
 

@@ -15,19 +15,29 @@ namespace openInstall2dx {
         
     public:
 
-        static void configAndroid(AndroidConfig adConfig);
+        static void configAndroid(AndroidConfig androidConfig);
 
         static void init();
 
-        static void getInstall(float timeout,void (*installCallback)(AppData appData));
+        #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+        static void getInstall(float timeout,void (*installCallback)(AppData, bool));
+        #elif  (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+        static void getInstall(float timeout,void (*installCallback)(AppData));
+        #endif
 
-        static void getInstallCanRetry(float timeout,void (*installCallback)(AppData appData, bool retry));
+        #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+        static void getInstallCanRetry(float timeout,void (*installCallback)(AppData, bool));
+        #endif
         
-        static void registerWakeUpHandler(void (*wakeupCallback)(AppData appData));
+        static void registerWakeUpHandler(void (*wakeupCallback)(AppData));
 
         static void reportRegister();
         
-        static void reportEffectPoint(const char *poindId, long pointValue);
+        static void reportEffectPoint(const char *pointId, long pointValue);
+
+        static void reportEffectPoint(const char *pointId, long pointValue, std::map<std::string, std::string> extraMap);
+
+        static void reportShare(const char *shareCode, const char *sharePlatform, void (*callbackMethod)(bool, std::string));
         
     };
 
