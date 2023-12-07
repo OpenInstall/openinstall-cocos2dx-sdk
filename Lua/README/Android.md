@@ -70,8 +70,8 @@
 ## 其它
 
 #### 预初始化
-预初始化函数不会采集设备信息，也不会向openinstall上报数据  
-**方式一：** 在Android 原生 Application 的 `onCreate()` 中调用 
+预初始化函数不会采集设备信息，也不会向openinstall上报数据，需要在应用启动时调用  
+**方式一：** 在 Android 原生 Application 的 `onCreate()` 中调用 
 ``` java
 OpenInstall.preInit(getApplicationContext());
 ```
@@ -81,9 +81,9 @@ local openinstall = require("app.models.openinstall")
 openinstall:preInit()
 ```
 #### 初始化前配置
-此配置接口，需要在调用 `init` 之前调用。
+此配置接口主要用于设置是否读取相关设备信息，需要在调用 `init` 之前调用。
 ``` lua
-	local op_config = {adEnabled = true}
+	local op_config = {adEnabled = true, imei = ""}
 	openinstall:configAndroid(op_config)
 ```
 传入参数说明：   
@@ -94,12 +94,12 @@ openinstall:preInit()
 | adEnabled| boolean | 是否开启广告平台接入，开启后 SDK 将获取设备相关信息 |
 | oaid | string | 通过移动安全联盟获取到的 oaid，SDK 将不再获取oaid |
 | gaid | string | 通过 google api 获取到的 advertisingId，SDK 将不再获取gaid |
-| imei| string | 传入设备的 serialNumber，SDK 将不再获取 |
-| macAddress| string | 传入设备的 serialNumber，SDK 将不再获取 |
-| imeiDisabled | boolean | （废弃，请使用 macAddress 配置）是否禁止 SDK 获取 imei |
-| macDisabled | boolean | （废弃，请使用 imei 配置）是否禁止 SDK 获取 mac 地址 |
+| imei| string | 传入设备的 imei，SDK 将不再获取 |
+| macAddress| string | 传入设备的 macAddress，SDK 将不再获取 |
+| imeiDisabled | boolean | 是否禁止 SDK 获取 imei（废弃，请使用 imei 配置） |
+| macDisabled | boolean | 是否禁止 SDK 获取 mac 地址（废弃，请使用 macAddress 配置） |
 
-对于上表中的设备信息，如果不要SDK获取也不想传入，请传入**空字符串**，不要传入固定无意义的字符串
+对于上表中的设备信息，如果不想SDK获取也不想传入，请传入**空字符串**，不要传入固定无意义的非空字符串
 
 #### 效果点明细上报
 在 openinstall 控制台 的 “效果点管理” 中添加对应的效果点，并启用“记录明细”，添加自定义参数
