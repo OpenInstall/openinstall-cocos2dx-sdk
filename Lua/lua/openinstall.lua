@@ -5,32 +5,66 @@ local openinstall = class("openinstall")
 
 local openinstallClassName = "io/openinstall/cocos2dx/OpenInstallHelper"
 
+-- 用于将 table 转化成结构为 k1=v1&k2=v2 的字符串 
+local function convert_params(mytable)
+	local params = ""
+	if type(mytable) ~= "table" then 
+		print("convert is not table")
+		return params
+	end
+	local notFirst = false
+	for k,v in pairs(mytable) do
+
+		local kType = type(k)
+		if kType ~= "string" then
+			print("config option key is not string type")
+			goto continue
+		end
+
+		local vStr = ""
+		local vType = type(v)
+		if vType == "boolean" or vType == "number" or vType == "string" then
+			vStr = v
+		else
+			print("config option value is not string or boolean")
+			goto continue
+		end
+		if notFirst then
+			params = params.."&"
+		end
+		params = params..k.."="..vStr
+		notFirst = true
+		::continue::
+	end
+	return params
+end
+
+-- 预初始化
+function openinstall:preInit()
+	print("call preInit start")
+	if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
+        local luaj = require "cocos.cocos2d.luaj"
+		local args = {}
+		local signs = "()V"
+		local ok,ret = luaj.callStaticMethod(openinstallClassName, "preInit", args, signs)
+		if not ok then
+			print("call preInit fail"..ret)
+		end
+	end
+end
+
 --[[
  移除 config(adEnabled, oaid, gaid) 接口
  使用新接口进行Android平台的广告接入配置
 ]]--
-function openinstall:configAndroid(options)
+function openinstall:configAndroid(optionTable)
 	print("call configAndroid start")
-	if(options["adEnabled"] == nil) then
-		options["adEnabled"] = false
-	end
-	if(options["oaid"] == nil) then
-		options["oaid"] = "nil"
-	end
-	if(options["gaid"] == nil) then
-		options["gaid"] = "nil"
-	end
-	if(options["macDisabled"] == nil) then
-		options["macDisabled"] = false
-	end
-	if(options["imeiDisabled"] == nil) then
-		options["imeiDisabled"] = false
-	end
 	
 	if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
         local luaj = require "cocos.cocos2d.luaj"
-		local args = {options["adEnabled"], options["oaid"], options["gaid"], options["macDisabled"], options["imeiDisabled"]}
-		local signs = "(ZLjava/lang/String;Ljava/lang/String;ZZ)V"
+		local optionParam = convert_params(optionTable)
+		local args = {optionParam}
+		local signs = "(Ljava/lang/String;)V"
 		local ok,ret = luaj.callStaticMethod(openinstallClassName, "config", args, signs)
 		if not ok then
 			print("call config fail"..ret)
@@ -133,23 +167,45 @@ end
 
 -- 上报效果点
 function openinstall:reportEffectPoint(pointId, pointValue)
+	openinstall:reportEffectPoint(pointId, pointValue, nil)
+end
+
+function openinstall:reportEffectPoint(pointId, pointValue, extraTable)
 	print("call reportEffectPoint start")
 	if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
         local luaj = require "cocos.cocos2d.luaj"
-		local args = {pointId, pointValue}
-		local signs = "(Ljava/lang/String;I)V"
+		local extraParam = convert_params(extraTable)
+		local args = {pointId, pointValue, extraParam}
+		local signs = "(Ljava/lang/String;ILjava/lang/String;)V"
 		local ok,ret = luaj.callStaticMethod(openinstallClassName, "reportEffectPoint", args, signs)
 		if not ok then
             print("call reportEffectPoint fail"..ret)
 		end
 	end
     if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) then
+		-- 暂时还没有实现效果点明细上报
         local luaoc = require "cocos.cocos2d.luaoc"
         local args = {pointId = pointId, pointValue = pointValue}
         local ok, ret = luaoc.callStaticMethod("LuaOpenInstallBridge","reportEffectPoint",args)
         if not ok then
             print("luaoc reportEffectPoint error:"..ret)
         end
+    end
+end
+
+function openinstall:reportShare(shareCode, sharePlatform, callback)
+	print("call reportShare start")
+	if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
+        local luaj = require "cocos.cocos2d.luaj"
+		local args = {shareCode, sharePlatform, callback}
+		local signs = "(Ljava/lang/String;Ljava/lang/String;I)V"
+		local ok,ret = luaj.callStaticMethod(openinstallClassName, "reportShare", args, signs)
+		if not ok then
+            print("call reportShare fail"..ret)
+		end
+	end
+    if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) then
+        print("not impl")
     end
 end
 

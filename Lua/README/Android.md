@@ -67,8 +67,21 @@
 > 不采用继承 `OpenInstallActivity` 的方式时，可以将 `OpenInstallActivity` 中的相关代码拷贝到 `AppActivity` 中；开发者升级时，也需要对照 `OpenInstallActivity` 的修改对 `AppActivity` 做相应的修改
 
 
-## 广告平台接入
-1、针对广告平台接入，新增配置接口，在调用 `init` 之前调用。参考 [广告平台对接Android集成指引](https://www.openinstall.io/doc/ad_android.html)
+## 其它
+
+#### 预初始化
+预初始化函数不会采集设备信息，也不会向openinstall上报数据  
+**方式一：** 在Android 原生 Application 的 `onCreate()` 中调用 
+``` java
+OpenInstall.preInit(getApplicationContext());
+```
+**方式二：** 在 cocos-lua 工程 AppBase 的 `onCreate()` 中调用
+```
+local openinstall = require("app.models.openinstall")
+openinstall:preInit()
+```
+#### 初始化前配置
+此配置接口，需要在调用 `init` 之前调用。
 ``` lua
 	local op_config = {adEnabled = true}
 	openinstall:configAndroid(op_config)
@@ -76,17 +89,31 @@
 传入参数说明：   
 | 参数名| 参数类型 | 描述 |  
 | --- | --- | --- |
-| adEnabled| bool | 广告平台接入开关（必须） |
-| macDisabled | bool | 是否禁止 SDK 获取 mac 地址 |
-| imeiDisabled | bool | 是否禁止 SDK 获取 imei |
-| gaid | string | 通过 google api 获取到的 advertisingId，SDK 将不再获取gaid |
+| androidId| string | 传入设备的 android_id，SDK 将不再获取 |
+| serialNumber| string | 传入设备的 serialNumber，SDK 将不再获取 |
+| adEnabled| boolean | 是否开启广告平台接入，开启后 SDK 将获取设备相关信息 |
 | oaid | string | 通过移动安全联盟获取到的 oaid，SDK 将不再获取oaid |
+| gaid | string | 通过 google api 获取到的 advertisingId，SDK 将不再获取gaid |
+| imei| string | 传入设备的 serialNumber，SDK 将不再获取 |
+| macAddress| string | 传入设备的 serialNumber，SDK 将不再获取 |
+| imeiDisabled | boolean | （废弃，请使用 macAddress 配置）是否禁止 SDK 获取 imei |
+| macDisabled | boolean | （废弃，请使用 imei 配置）是否禁止 SDK 获取 mac 地址 |
 
-> 注意：`openinstall:config(adEnabled, oaid, gaid)` 接口已移除，请使用新的配置接口  
+对于上表中的设备信息，如果不要SDK获取也不想传入，请传入**空字符串**，不要传入固定无意义的字符串
 
-2、为了精准地匹配到渠道，需要获取设备唯一标识码（IMEI），因此需要在 AndroidManifest.xml 中添加权限声明 
+#### 效果点明细上报
+在 openinstall 控制台 的 “效果点管理” 中添加对应的效果点，并启用“记录明细”，添加自定义参数
+``` lua
+     local extraTable = {}
+     extraTable["x"] = "123"
+     extraTable["y"] = "abc"
+     openinstall:reportEffectPoint("effect_detail", 1, extraTable)
 ```
-<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+#### 分享统计
+分享上报主要是统计某个具体用户在某次分享中，分享给了哪个平台，再通过JS端绑定被分享的用户信息，进一步统计到被分享用户的激活回流等情况。分享平台请参考 openinstall 官网文档
+``` lua
+     local function reportShareCallback(result)
+        print("reportShare 回调 "..result)
+     end
+     openinstall:reportShare("cc0011", "QQ", reportShareCallback)
 ```
-3、在权限申请成功后，再进行 openinstall 初始化。**无论终端用户是否同意，都要调用初始化**
-> 注意：`openinstall:init(permission)` 接口已移除，请自行处理权限请求
