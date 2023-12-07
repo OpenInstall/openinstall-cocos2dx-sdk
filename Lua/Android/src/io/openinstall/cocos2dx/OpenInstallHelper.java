@@ -61,8 +61,13 @@ public class OpenInstallHelper {
         for (int i = 0; i < paramArr.length; i++) {
             if (TextUtils.isEmpty(paramArr[i])) continue;
             String kv[] = paramArr[i].split("=");
-            if (kv.length != 2) continue;
-            map.put(kv[0], kv[1]);
+            if (kv.length == 1) {
+                map.put(kv[0], "");
+            } else if (kv.length == 2) {
+                map.put(kv[0], kv[1]);
+            } else {
+                // 非法数据
+            }
         }
         return map;
     }
@@ -72,15 +77,6 @@ public class OpenInstallHelper {
             return Boolean.parseBoolean(map.get(key));
         }
         return false;
-    }
-
-    private static String getString(Map<String, String> map, String key) {
-        String value = map.get(key);
-        if (value == null || value.equalsIgnoreCase("null")
-                || value.equalsIgnoreCase("nil")) {
-            return null;
-        }
-        return value;
     }
 
     public static void preInit() {
@@ -98,6 +94,7 @@ public class OpenInstallHelper {
             return;
         }
         final Map<String, String> paramMap = parse(params);
+        Log.d(TAG, "config map " + paramMap);
         runOnUIThread(new Runnable() {
             @Override
             public void run() {
@@ -115,19 +112,19 @@ public class OpenInstallHelper {
                     builder.imeiDisabled();
                 }
                 if (paramMap.containsKey("imei")) {
-                    builder.imei(getString(paramMap, "imei"));
+                    builder.imei(paramMap.get("imei"));
                 }
                 if (hasTrue(paramMap, "macDisabled")) {
                     builder.macDisabled();
                 }
                 if (paramMap.containsKey("macAddress")) {
-                    builder.macAddress(getString(paramMap, "macAddress"));
+                    builder.macAddress(paramMap.get("macAddress"));
                 }
                 if (paramMap.containsKey("androidId")) {
-                    builder.androidId(getString(paramMap, "androidId"));
+                    builder.androidId(paramMap.get("androidId"));
                 }
                 if (paramMap.containsKey("serialNumber")) {
-                    builder.serialNumber(getString(paramMap, "serialNumber"));
+                    builder.serialNumber(paramMap.get("serialNumber"));
                 }
                 if (hasTrue(paramMap, "simulatorDisabled")) {
                     builder.simulatorDisabled();
