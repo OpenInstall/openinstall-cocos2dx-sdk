@@ -109,11 +109,14 @@ openinstall:preInit()
      extraTable["y"] = "abc"
      openinstall:reportEffectPoint("effect_detail", 1, extraTable)
 ```
+**注意：**自定义参数中禁止携带`=`和`&`字符，如果有，请进行转义再传入
+
 #### 分享统计
-分享上报主要是统计某个具体用户在某次分享中，分享给了哪个平台，再通过JS端绑定被分享的用户信息，进一步统计到被分享用户的激活回流等情况。分享平台请参考 openinstall 官网文档
+分享上报主要是统计某个具体用户在某次分享中，分享给了哪个平台，再通过JS端绑定被分享的用户信息，进一步统计到被分享用户的激活回流等情况。
 ``` lua
      local function reportShareCallback(result)
         print("reportShare 回调 "..result)
      end
      openinstall:reportShare("cc0011", "QQ", reportShareCallback)
 ```
+第一个参数是分享ID，第二个参数是分享平台。分享平台请参考 openinstall 官网文档
